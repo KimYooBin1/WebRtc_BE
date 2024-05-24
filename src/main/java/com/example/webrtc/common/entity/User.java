@@ -16,7 +16,12 @@ public class User {
 	@Id @GeneratedValue
 	private Long id;
 	private String name;
+	// 인증을 위해서
+	private String phoneNum;
+	private String email;
 	// private String ID;
 	private String password;
-
+	@ManyToOne
+	@JoinColumn(name = "chatroom_id")
+	private Chatroom chatroom;
 }

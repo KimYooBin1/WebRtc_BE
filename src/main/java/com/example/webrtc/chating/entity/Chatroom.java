@@ -2,17 +2,20 @@ package com.example.webrtc.chating.entity;
 
 import static lombok.AccessLevel.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.webrtc.common.entity.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Chatroom {
 	@Id
@@ -21,12 +24,11 @@ public class Chatroom {
 	private String roomName;
 	private Long limitUserCnt;
 	private Long userCnt;
+	private String password;
 
+	@OneToMany(mappedBy = "chatroom")
+	private List<User> userList = new ArrayList<>();
 
-	public Chatroom(String roomName) {
-		this.roomName = roomName;
-		this.userCnt = 0L;
-	}
 	public void plus(){
 		// TODO : 인원이 꽉차면?
 		this.userCnt += 1;
@@ -35,5 +37,18 @@ public class Chatroom {
 	public void des() {
 		// TODO : 마이너스가 되면?
 		this.userCnt -= 1;
+	}
+	// 비밀번호가 걸린 방 생성
+	public Chatroom(String roomName, Long limitUserCnt, String password) {
+		this.roomName = roomName;
+		this.limitUserCnt = limitUserCnt;
+		this.password = password;
+		this.userCnt = 1L;
+	}
+	// 비밀번호가 없는 방 생성
+	public Chatroom(String roomName, Long limitUserCnt) {
+		this.roomName = roomName;
+		this.limitUserCnt = limitUserCnt;
+		this.userCnt = 1L;
 	}
 }
