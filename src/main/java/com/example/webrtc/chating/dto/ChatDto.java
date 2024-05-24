@@ -2,8 +2,6 @@ package com.example.webrtc.chating.dto;
 
 import java.time.LocalDateTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,6 +11,7 @@ public class ChatDto {
 	public enum Type{
 		ENTER, TALK, LEAVE
 	}
+	private Long roomId;
 	private Type type;
 	private String sender;
 	private String message;
