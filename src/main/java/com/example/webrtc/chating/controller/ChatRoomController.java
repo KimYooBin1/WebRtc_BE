@@ -26,6 +26,7 @@ public class ChatRoomController {
 	public ResponseEntity<List<Chatroom>> ChatRoomList(){
 		return ResponseEntity.ok(chatroomService.findAllRoom());
 	}
+
 	@PostMapping("/chatroom")
 	public ResponseEntity<Chatroom> ChatRoomCreate(@RequestBody CreateRoom request){
 		return ResponseEntity.ok(chatroomService.createChatRoom(request));

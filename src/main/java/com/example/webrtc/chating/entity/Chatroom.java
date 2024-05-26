@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.webrtc.common.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class Chatroom {
 	private Long limitUserCnt;
 	private Long userCnt;
 	private String password;
-
+	@JsonIgnore
 	@OneToMany(mappedBy = "chatroom")
 	private List<User> userList = new ArrayList<>();
 
