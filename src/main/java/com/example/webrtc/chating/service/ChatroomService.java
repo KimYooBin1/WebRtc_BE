@@ -1,5 +1,6 @@
 package com.example.webrtc.chating.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class ChatroomService {
 
 	public Chatroom findRoomByName(String name) {
 		// TODO : 값이 비어있으면?
-		return chatroomRepository.findByRoomName(name).orElseThrow();
+		return chatroomRepository.findByRoomName(name);
 	}
 
 	public List<User> findChatRoomUsers(Long roomId) {

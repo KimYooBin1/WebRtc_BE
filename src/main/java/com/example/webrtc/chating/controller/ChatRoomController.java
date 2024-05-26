@@ -32,4 +32,17 @@ public class ChatRoomController {
 		return ResponseEntity.ok(chatroomService.createChatRoom(request));
 	}
 
+	@PostMapping("/chatroom/duplication")
+	public ResponseEntity<Boolean> ChatRoomNameDupCheck(@RequestBody CreateRoom request){
+		Chatroom room = chatroomService.findRoomByName(request.getRoomName());
+		log.info("{}", request.getRoomName());
+		if(room == null){
+			// 중복되는 이름이 없음
+			return ResponseEntity.ok(true);
+		}
+		else{
+			//중복되는 이름이 있음(사용 불가)
+			return ResponseEntity.ok(false);
+		}
+	}
 }
