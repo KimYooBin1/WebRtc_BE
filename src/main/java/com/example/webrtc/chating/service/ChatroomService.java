@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import com.example.webrtc.chating.entity.Chatroom;
 import com.example.webrtc.chating.entity.CreateRoom;
 import com.example.webrtc.chating.repository.ChatroomRepository;
+import com.example.webrtc.common.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,13 @@ public class ChatroomService {
 	public Chatroom findRoomByName(String name) {
 		// TODO : 값이 비어있으면?
 		return chatroomRepository.findByRoomName(name).orElseThrow();
+	}
+
+	public List<User> findChatRoomUsers(Long roomId) {
+		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(
+			// TODO : user가 1명도 없다?
+		);
+		return chatroom.getUserList();
 	}
 
 	@Transactional

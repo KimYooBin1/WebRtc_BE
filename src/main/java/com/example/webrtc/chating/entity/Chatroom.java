@@ -51,4 +51,9 @@ public class Chatroom {
 		this.limitUserCnt = limitUserCnt;
 		this.userCnt = 1L;
 	}
+
+	public void connectUser(User user) {
+		this.userList.add(user);
+		user.setChatroom(this);
+	}
 }
