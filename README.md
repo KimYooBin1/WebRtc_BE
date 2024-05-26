@@ -9,11 +9,12 @@ spring websocket과 stomp를 사용해서 chatting service 구현
 | 현재 방에 있는 유저 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/756907e8-cb38-4079-8657-a2e311f5caa7) |
 | 유저가 들어오거나 나갈 때 채팅방에 해당 정보 표시 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/c6682e2d-0c55-4419-af1e-ba5040d07dc4) |
 | 채팅 보내기 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/6970f7fd-6fbf-45ca-ab77-7e6fca9a59ac) |
+| 채팅방 정보 설정 (채팅방 이름, 제한 인원, 비밀번호) | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/553f93b1-17fc-45e9-97eb-8a1ecacc88e7) |
 
 ### 구현할 기능
 | 기능 설명 | 스크린샷 |
 | -------- | -------- |
-| 채팅방 정보 설정 (채팅방 이름, 제한 인원, 비밀번호) |  |
+| 채팅방 중복 이름 체크 |  |
 | 채팅방 사진, 파일 전송 | |
 | 로그인(기본 + oauth2) | |
 | ui깔끔하게 | |
