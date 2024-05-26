@@ -6,7 +6,7 @@ spring websocket과 stomp를 사용해서 chatting service 구현
 | 기능 설명 | 스크린샷 |
 | -------- | -------- |
 | 현재 채팅방 목록 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/6c7735c7-0722-4788-8c07-22bac6ad4c69) |
-| 현재 방에 있는 유저 | FE 구현 중 |
+| 현재 방에 있는 유저 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/756907e8-cb38-4079-8657-a2e311f5caa7) |
 | 유저가 들어오거나 나갈 때 채팅방에 해당 정보 표시 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/c6682e2d-0c55-4419-af1e-ba5040d07dc4) |
 | 채팅 보내기 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/6970f7fd-6fbf-45ca-ab77-7e6fca9a59ac) |
 
