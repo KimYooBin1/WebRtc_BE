@@ -7,7 +7,7 @@ spring websocket과 stomp를 사용해서 chatting service 구현
 | -------- | -------- |
 | 현재 채팅방 목록 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/6c7735c7-0722-4788-8c07-22bac6ad4c69) |
 | 현재 방에 있는 유저 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/756907e8-cb38-4079-8657-a2e311f5caa7) |
-| 유저가 들어오거나 나갈 때 채팅방에 해당 정보 표시 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/c6682e2d-0c55-4419-af1e-ba5040d07dc4) |
+| 유저가 들어올 때 채팅방에 해당 정보 표시 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/c6682e2d-0c55-4419-af1e-ba5040d07dc4) |
 | 채팅 보내기 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/6970f7fd-6fbf-45ca-ab77-7e6fca9a59ac) |
 | 채팅방 정보 설정 (채팅방 이름, 제한 인원, 비밀번호) | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/553f93b1-17fc-45e9-97eb-8a1ecacc88e7) |
 | 채팅방 중복 이름 체크 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/055ff339-95d1-473a-9a82-9bf5ba7966c5) |
@@ -19,7 +19,9 @@ spring websocket과 stomp를 사용해서 chatting service 구현
 | 채팅방 사진, 파일 전송 | |
 | 로그인(oauth2) |  |
 | ui깔끔하게 | |
-| 실제 배포 | |
+| 인원 다 찼을때 | |
+| 방 비밀번호 | |
+| 인원이 방에서 나갔을 떄 표시 | |
 
 
 
@@ -31,6 +33,7 @@ webrtc를 사용해 streaming service 구현.
 | ------- | ----- |
 | 1 대 1 화상통화 | |
 | 얼굴 인식 -> 가상 캐릭터로 변환 | |
+| 실제 배포 | |
 
 ## 3. 사용 기술
 | 역할            | 종류
