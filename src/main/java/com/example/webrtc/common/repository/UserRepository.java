@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.webrtc.common.entity.User;
 
-public interface UserRespository extends JpaRepository<User, Long> {
-	public Optional<User> findByName(String name);
+public interface UserRepository extends JpaRepository<User, Long> {
+	Optional<User> findByName(String name);
 }

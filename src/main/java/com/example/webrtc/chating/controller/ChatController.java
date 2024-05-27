@@ -3,7 +3,6 @@ package com.example.webrtc.chating.controller;
 import static java.time.LocalDateTime.*;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -20,7 +19,7 @@ import com.example.webrtc.chating.entity.Chatroom;
 import com.example.webrtc.chating.repository.ChatroomRepository;
 import com.example.webrtc.chating.service.ChatroomService;
 import com.example.webrtc.common.entity.User;
-import com.example.webrtc.common.repository.UserRespository;
+import com.example.webrtc.common.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ChatController {
 	private final ChatroomRepository chatroomRepository;
-	private final UserRespository userRespository;
+	private final UserRepository userRespository;
 	private final ChatroomService chatroomService;
 	/**
 	 * MessageMapping 에 정의되어 있는 url로 message 를 보내게 되면
@@ -78,10 +77,7 @@ public class ChatController {
 	public ResponseEntity<List<UserListDto>> chatRoomUserList(@PathVariable Long roomId){
 		log.info("{}방 유저 확인", roomId);
 		List<User> chatRoomUsers = chatroomService.findChatRoomUsers(roomId);
-		// log.info("{}",chatRoomUsers);
-		List<UserListDto> list = chatRoomUsers.stream().map((e) -> {
-			return new UserListDto(e.getName());
-		}).toList();
+		List<UserListDto> list = chatRoomUsers.stream().map((e) -> new UserListDto(e.getName())).toList();
 		return ResponseEntity.ok(list);
 	}
 }
