@@ -1,7 +1,9 @@
 package com.example.webrtc.common.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -26,5 +28,10 @@ public class UserController {
 	@PostMapping("/user/sign")
 	public ResponseEntity<User> sign(@RequestBody SignDto request){
 		return ResponseEntity.ok(userService.sign(request));
+	}
+
+	@GetMapping("/")
+	public ResponseEntity<String> test(){
+		return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 }

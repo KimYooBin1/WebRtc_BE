@@ -30,10 +30,14 @@ public class User {
 	@JoinColumn(name = "chatroom_id")
 	private Chatroom chatroom;
 
-	public User(SignDto request) {
-		this.name = request.getName();
-		this.phoneNum = request.getPhoneNumber();
-		this.email = request.getEmail();
-		this.password = request.getPassword();
+	public User(String name, String password){
+		this.name = name;
+		this.password = password;
+	}
+	public User(String name, String password, String email, String phoneNum) {
+		this.name = name;
+		this.phoneNum = phoneNum;
+		this.email = email;
+		this.password = password;
 	}
 }
