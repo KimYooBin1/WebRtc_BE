@@ -73,7 +73,7 @@ public class SecurityConfig {
 		//경로별 인가 작업
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/user/**", "/chatroom").permitAll()
+				.requestMatchers("/user/**", "/chatroom", "/websocket/**").permitAll()
 				// .requestMatchers("/admin").hasRole("ADMIN")
 				.anyRequest().authenticated());
 		//JWTFilter 등록

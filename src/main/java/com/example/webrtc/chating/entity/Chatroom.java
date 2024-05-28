@@ -57,4 +57,8 @@ public class Chatroom {
 		this.userList.add(user);
 		user.setChatroom(this);
 	}
+	public void disconnectUser(User user){
+		this.userList.remove(user);
+		user.setChatroom(null);
+	}
 }
