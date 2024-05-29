@@ -4,6 +4,7 @@ import static lombok.AccessLevel.*;
 
 import com.example.webrtc.chating.entity.Chatroom;
 import com.example.webrtc.common.dto.SignDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,10 +14,12 @@ import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = PROTECTED)
+@ToString
 public class User {
 	@Id @GeneratedValue
 	private Long id;
@@ -26,6 +29,8 @@ public class User {
 	private String email;
 	// private String ID;
 	private String password;
+
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "chatroom_id")
 	private Chatroom chatroom;

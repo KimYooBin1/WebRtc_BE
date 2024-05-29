@@ -3,6 +3,8 @@ package com.example.webrtc.chating.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.webrtc.chating.entity.Chatroom;
 import com.example.webrtc.chating.entity.CreateRoom;
 import com.example.webrtc.chating.service.ChatroomService;
+import com.example.webrtc.common.entity.User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,5 +47,9 @@ public class ChatRoomController {
 			//중복되는 이름이 있음(사용 불가)
 			return ResponseEntity.ok(false);
 		}
+	}
+	@GetMapping("/check")
+	public String test(){
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 }

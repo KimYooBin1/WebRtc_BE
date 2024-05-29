@@ -13,7 +13,8 @@ public enum ErrorCode {
 	// INPUT_INVALID_TYPE_ERROR(400, "GLOBAL-003", "잘못된 입력 타입입니다."),
 	// REQUEST_PARAMETER_NOT_FOUND_ERROR(400, "GLOBAL-004", "입력 파라미터가 존재하지 않습니다."),
 	// REQUEST_PARAMETER_TYPE_NOT_MATCH_ERROR(400, "GLOBAL-005", "입력 파라미터의 타입이 올바르지 않습니다."),
-
+	//chatRoom
+	CHAT_ROOM_JOIN_ERROR(400,"CHATROOM-001", "방에 인원이 다 찼습니다"),
 	//jwt
 	INVALID_TOKEN_ERROR(400, "AUTH-001", "jwt 토큰이 유효하지 않습니다."),
 	ALREADY_RE_ISSUED_TOKEN_ERROR(400, "AUTH-002", "이미 액세스 토큰 재발급에 사용된 리프레시 토큰입니다.");

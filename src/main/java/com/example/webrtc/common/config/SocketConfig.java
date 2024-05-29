@@ -1,14 +1,21 @@
 package com.example.webrtc.common.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.example.webrtc.common.filter.StompInterceptor;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSocketMessageBroker
 public class SocketConfig implements WebSocketMessageBrokerConfigurer {
+	private final StompInterceptor stompInterceptor;
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/websocket")
@@ -24,5 +31,10 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
 		 * 주로 @MessageMapping 과 @SendTo 를 사용해 구독하고 있는 peer 에게 data를 전송한다
 		 */
 		registry.setApplicationDestinationPrefixes("/app");
+	}
+
+	@Override
+	public void configureClientInboundChannel(ChannelRegistration registration) {
+		registration.interceptors(stompInterceptor);
 	}
 }

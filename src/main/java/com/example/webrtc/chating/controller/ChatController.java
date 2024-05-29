@@ -5,10 +5,10 @@ import static com.example.webrtc.common.exception.ErrorCode.*;
 import static java.time.LocalDateTime.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -52,21 +52,26 @@ public class ChatController {
 	@SendTo("/topic/chatroom/{roomId}")
 	@Transactional	//한 tarnsactional 안에서 처리해주기 위해 설정
 	public ChatDto chatRoomJoin(@Payload ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor){
-		log.info("{}",chatDto);
+		log.info("chatDto = {}",chatDto);
 		String sender = chatDto.getSender();
 		Chatroom chatroom = chatroomRepository.findById(chatDto.getRoomId()).orElseThrow(
 			// TODO : 해당 id의 chatroom이 없을 경우
 		);
 		User user = userRepository.findByName(sender).orElseThrow(
 			// TODO : 이름이 없을때는 어떻게 처리할 것인가
-			() -> new CustomException(INVALID_TOKEN_ERROR)
 		);
-		chatroom.plus();
-		chatroom.connectUser(user);
 
 		// sessionDisconnect event 를 사용하기 때문에 해당 session 에 user 정보와 chatroom 정보 입력
 		headerAccessor.getSessionAttributes().put("roomId", chatroom.getId());
 		headerAccessor.getSessionAttributes().put("userId", user.getId());
+
+		if(chatroom.getLimitUserCnt() <= chatroom.getUserCnt()){
+			log.info("인원 제한");
+			throw new CustomException(CHAT_ROOM_JOIN_ERROR);
+		}
+		chatroom.plus();
+		chatroom.connectUser(user);
+
 
 		chatDto.setMessage(sender+"님이 들어왔습니다");
 		chatDto.setTime(now());

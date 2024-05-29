@@ -38,7 +38,7 @@ public class UserController {
 	@GetMapping("/test")
 	public ResponseEntity<List<User>> test(){
 		List<User> all = userRepository.findAll();
-		if(all.isEmpty()){
+		if(!all.isEmpty()){
 			throw new CustomException(ErrorCode.INVALID_TOKEN_ERROR);
 		}
 		return ResponseEntity.ok(all);
