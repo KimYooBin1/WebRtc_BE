@@ -2,6 +2,7 @@ package com.example.webrtc.common.filter;
 
 import static org.springframework.messaging.simp.stomp.StompCommand.*;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
@@ -36,9 +37,9 @@ public class StompInterceptor implements ChannelInterceptor {
 		StompCommand command = headerAccessor.getCommand();
 
 		//subscribe 에서 JWT를 활용해 principal 설정
-		if(command.equals(UNSUBSCRIBE) || command.equals(CONNECT) || command.equals(SEND)){
-			return message;
-		}
+		// if(command.equals(UNSUBSCRIBE) || command.equals(CONNECT) || command.equals(SEND)){
+		// 	return message;
+		// }
 		String authorizationHeader = headerAccessor.getNativeHeader("Authorization").get(0);
 		log.info("headerAccess = {}", authorizationHeader);
 		if(authorizationHeader == null){
@@ -60,12 +61,11 @@ public class StompInterceptor implements ChannelInterceptor {
 		memberName = jwtUtil.getUsername(token);
 		log.info("memberName = {}", memberName);
 		this.setAuthentication(message, headerAccessor);
-
 		return message;
 	}
 
 	private void setAuthentication(Message<?> message, StompHeaderAccessor headerAccessor) {
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberName, null);
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberName,null, null);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		headerAccessor.setUser(authentication);
 	}

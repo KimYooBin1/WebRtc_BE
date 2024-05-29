@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,16 +26,12 @@ public class GlobalMessageExceptionHandler {
 	private final MethodProvider methodProvider = new MethodProvider();
 
 	@MessageExceptionHandler(CustomException.class)
-	public String handleCustomException(CustomException e, SimpMessageHeaderAccessor accessor){
-		log.info("accessor = {}", accessor.getSessionAttributes());
-		String user = String.valueOf(accessor.getSessionAttributes().get("userId"));
-		// String user = SecurityContextHolder.getContext().getAuthentication().getName();
+	public void handleCustomException(CustomException e, Principal principal){
 		log.info("Stomp 예외 발생");
-		log.info("user = {}", user);
-		// TODO : @AuthenticationPrincipal, principal 이 작동 안함
-		// template.convertAndSendToUser("user", "/topic/chatroom/"+"123",
-		// 	Objects.requireNonNull(methodProvider.globalException(e).getBody()));
-		return "error";
+		log.info("principal = {}", principal.getName());
+		// TODO : 방번호를 어떻게 받아올지, sub 주소는 어떻게 해야될지
+		template.convertAndSendToUser(principal.getName(), "/topic/chatroom/552",
+			Objects.requireNonNull(methodProvider.globalException(e).getBody()));
 	}
 	private class MethodProvider implements GlobalExceptionHandlerInterface{
 		@Override
