@@ -1,4 +1,4 @@
-package com.example.webrtc.utils;
+package com.example.webrtc.common.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

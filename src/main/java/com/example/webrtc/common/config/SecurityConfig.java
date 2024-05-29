@@ -1,4 +1,4 @@
-package com.example.webrtc.config;
+package com.example.webrtc.common.config;
 
 import java.util.Collections;
 
@@ -12,13 +12,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.example.webrtc.filter.JWTFilter;
-import com.example.webrtc.filter.LoginFilter;
-import com.example.webrtc.utils.JWTUtil;
+import com.example.webrtc.common.filter.JWTFilter;
+import com.example.webrtc.common.filter.LoginFilter;
+import com.example.webrtc.common.utils.JWTUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

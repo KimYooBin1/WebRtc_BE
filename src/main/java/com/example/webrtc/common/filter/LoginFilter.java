@@ -1,7 +1,6 @@
-package com.example.webrtc.filter;
+package com.example.webrtc.common.filter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -14,7 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.webrtc.common.dto.CustomUserDetails;
-import com.example.webrtc.utils.JWTUtil;
+import com.example.webrtc.common.utils.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;

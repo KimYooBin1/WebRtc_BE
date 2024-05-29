@@ -1,6 +1,7 @@
 package com.example.webrtc.chating.controller;
 
 import static com.example.webrtc.chating.dto.ChatDto.Type.*;
+import static com.example.webrtc.common.exception.ErrorCode.*;
 import static java.time.LocalDateTime.*;
 
 import java.util.List;
@@ -22,12 +23,12 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.example.webrtc.chating.dto.ChatDto;
-import com.example.webrtc.chating.dto.ChatDto.Type;
 import com.example.webrtc.chating.dto.UserListDto;
 import com.example.webrtc.chating.entity.Chatroom;
 import com.example.webrtc.chating.repository.ChatroomRepository;
 import com.example.webrtc.chating.service.ChatroomService;
 import com.example.webrtc.common.entity.User;
+import com.example.webrtc.common.exception.CustomException;
 import com.example.webrtc.common.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -58,8 +59,8 @@ public class ChatController {
 		);
 		User user = userRepository.findByName(sender).orElseThrow(
 			// TODO : 이름이 없을때는 어떻게 처리할 것인가
+			() -> new CustomException(INVALID_TOKEN_ERROR)
 		);
-
 		chatroom.plus();
 		chatroom.connectUser(user);
 

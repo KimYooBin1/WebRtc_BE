@@ -1,4 +1,4 @@
-package com.example.webrtc.filter;
+package com.example.webrtc.common.filter;
 
 import java.io.IOException;
 
@@ -9,15 +9,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.webrtc.common.dto.CustomUserDetails;
 import com.example.webrtc.common.entity.User;
-import com.example.webrtc.utils.JWTUtil;
+import com.example.webrtc.common.utils.JWTUtil;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
@@ -49,7 +47,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
 			System.out.println("token expired");
 			filterChain.doFilter(request, response);
-
 			//조건이 해당되면 메소드 종료 (필수)
 			return;
 		}
