@@ -1,5 +1,6 @@
 package com.example.webrtc.common.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,10 @@ import com.example.webrtc.common.repository.UserRepository;
 import com.example.webrtc.common.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class UserController {
 	private final UserService userService;
@@ -36,7 +39,8 @@ public class UserController {
 	}
 
 	@GetMapping("/test")
-	public ResponseEntity<List<User>> test(){
+	public ResponseEntity<List<User>> test(Principal principal){
+		log.info("principal = {}", principal);
 		List<User> all = userRepository.findAll();
 		if(!all.isEmpty()){
 			throw new CustomException(ErrorCode.INVALID_TOKEN_ERROR);
