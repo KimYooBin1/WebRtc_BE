@@ -13,6 +13,7 @@ spring websocket과 stomp를 사용해서 chatting service 구현
 | 채팅방 중복 이름 체크 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/055ff339-95d1-473a-9a82-9bf5ba7966c5) |
 | 로그인(기본) | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/73d56755-d1f4-41e7-9cfc-f9529864e41e) |
 | 인원이 방에서 나갔을 떄 표시 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/ed699ff6-0f9a-4d50-bb1e-418277c45cd4) |
+| 비어있는 방 삭제 |  |
 
 ### 구현할 기능
 | 기능 설명 | 스크린샷 |
