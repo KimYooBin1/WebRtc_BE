@@ -2,9 +2,6 @@ package com.example.webrtc.common.filter;
 
 import static org.springframework.messaging.simp.stomp.StompCommand.*;
 
-import java.security.Principal;
-import java.util.List;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -13,11 +10,9 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.webrtc.common.utils.JWTUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +32,9 @@ public class StompInterceptor implements ChannelInterceptor {
 		StompCommand command = headerAccessor.getCommand();
 
 		//subscribe 에서 JWT를 활용해 principal 설정
-		// if(command.equals(UNSUBSCRIBE) || command.equals(CONNECT) || command.equals(SEND)){
-		// 	return message;
-		// }
+		if(command.equals(DISCONNECT)){
+			return message;
+		}
 		String authorizationHeader = headerAccessor.getNativeHeader("Authorization").get(0);
 		log.info("headerAccess = {}", authorizationHeader);
 		if(authorizationHeader == null){
