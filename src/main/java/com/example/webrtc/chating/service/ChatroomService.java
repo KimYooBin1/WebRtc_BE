@@ -67,5 +67,8 @@ public class ChatroomService {
 		).des();
 	}
 
-
+	@Transactional
+	public void deleteChatRoom(Long id){
+		chatroomRepository.deleteById(id);
+	}
 }
