@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DeleteChatRoomJobConfig {
 	private final EntityManagerFactory entityManagerFactory;
+	// TODO : select, delete 가 각각 따로 n개씩 query문 생성됨, chunk때문에 중간에 삭제되지 않는 data가 있음. 근야 여러번 돌릴지 index = 0 처리를 할지
 
 	@Bean
 	public JpaPagingItemReader<Chatroom> reader(){
