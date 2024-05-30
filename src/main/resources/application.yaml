@@ -11,6 +11,12 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
 logging:
   level:
     org.hibernate.SQL: debug

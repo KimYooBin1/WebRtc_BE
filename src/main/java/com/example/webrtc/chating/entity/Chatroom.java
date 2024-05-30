@@ -14,10 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@ToString
 public class Chatroom {
 	@Id
 	@GeneratedValue
