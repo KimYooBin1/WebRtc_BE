@@ -23,6 +23,7 @@ import lombok.ToString;
 public class User {
 	@Id @GeneratedValue
 	private Long id;
+	private String username;
 	private String name;
 	// 인증을 위해서
 	private String phoneNum;
@@ -44,5 +45,11 @@ public class User {
 		this.phoneNum = phoneNum;
 		this.email = email;
 		this.password = password;
+	}
+
+	public User(String username, String name, String email) {
+		this.username = username;
+		this.name = name;
+		this.email = email;
 	}
 }

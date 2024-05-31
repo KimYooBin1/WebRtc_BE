@@ -8,5 +8,6 @@ import com.example.webrtc.common.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByName(String name);
+	User findByUsername(String username);
 	Boolean existsByName(String name);
 }
