@@ -14,13 +14,13 @@ spring websocket과 stomp를 사용해서 chatting service 구현
 | 로그인(기본) | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/73d56755-d1f4-41e7-9cfc-f9529864e41e) |
 | 인원이 방에서 나갔을 떄 표시 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/ed699ff6-0f9a-4d50-bb1e-418277c45cd4) |
 | 비어있는 방 삭제 |  |
+| 방 비밀번호 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/1bc197d3-6995-46dc-8a62-28e38ee8fb8f) ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/433336c4-7ccb-4c99-8867-4ea4b62cc780) |
+| 인원 다 찼을때 | ![image](https://github.com/KimYooBin1/WebRtc_BE/assets/55120730/47f668fb-afaa-4f6b-a12b-50583c4ed8cf) |
 
 ### 구현할 기능
 | 기능 설명 | 스크린샷 |
 | -------- | -------- |
 | 로그인(oauth2) |  |
-| 인원 다 찼을때 | |
-| 방 비밀번호 | |
 | 채팅방 사진, 파일 전송 | |
 
 
