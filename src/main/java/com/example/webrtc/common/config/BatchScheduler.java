@@ -21,7 +21,7 @@ public class BatchScheduler {
 	private final JobLauncher jobLauncher;
 	private final Job notificationJob;
 
-	@Scheduled(cron = "1 * * * * *")
+	@Scheduled(cron = "30 * * * * *")
 	private void deleteChatRoom() throws
 		JobInstanceAlreadyCompleteException,
 		JobExecutionAlreadyRunningException,
