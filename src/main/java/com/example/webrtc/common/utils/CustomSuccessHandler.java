@@ -15,8 +15,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private final JWTUtil jwtUtil;
 
@@ -39,7 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
 
-		String token = jwtUtil.createJwt(username, 60*60*60L);
+		String token = jwtUtil.createJwt(username, 60*60*6000L);
 
 		// response.addHeader("Authorization", "Bearer " + token);
 		response.addCookie(createCookie("Authorization", token));
@@ -49,7 +51,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	// TODO : https을 통해서만 set-cookie가 가능하다. https로 변경해야함
 	private Cookie createCookie(String key, String value) {
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(60*60*60);
+		cookie.setMaxAge(60*60*6000);
 		//cookie.setSecure(true);
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);

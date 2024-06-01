@@ -37,7 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			return null;
 		}
 		String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
-		User existData = userRepository.findByUsername(username);
+		User existData = userRepository.findByUsername(username).orElse(null);
 		if(existData == null){
 			User user = new User(username, oAuth2Response.getName(), oAuth2Response.getEmail());
 			userRepository.save(user);

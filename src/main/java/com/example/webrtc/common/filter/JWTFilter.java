@@ -44,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		// 	return;
 		// }
 		//cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
-		String authorization = null;
+		String token = null;
 		Cookie[] cookies = request.getCookies();
 		if(cookies != null){
 			for (Cookie cookie : cookies) {
@@ -52,12 +52,12 @@ public class JWTFilter extends OncePerRequestFilter {
 				System.out.println(cookie.getName());
 				if (cookie.getName().equals("Authorization")) {
 
-					authorization = cookie.getValue();
+					token = cookie.getValue();
 				}
 			}
 		}
 		//Authorization 헤더 검증
-		if (authorization == null) {
+		if (token == null) {
 
 			System.out.println("token null");
 			filterChain.doFilter(request, response);
@@ -68,7 +68,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		System.out.println("authorization now");
 		//Bearer 부분 제거 후 순수 토큰만 획득
-		String token = authorization.split(" ")[1];
 
 		//토큰 소멸 시간 검증
 		if (jwtUtil.isExpired(token)) {

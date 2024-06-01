@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,12 +40,20 @@ public class UserController {
 	}
 
 	@GetMapping("/test")
-	public ResponseEntity<List<User>> test(Principal principal){
-		log.info("principal = {}", principal);
+	public ResponseEntity<List<User>> test(@CookieValue String Authorization){
+		log.info("principal = {}", Authorization);
 		List<User> all = userRepository.findAll();
 		if(!all.isEmpty()){
 			throw new CustomException(ErrorCode.INVALID_TOKEN_ERROR);
 		}
 		return ResponseEntity.ok(all);
+	}
+	@GetMapping("/user")
+	public ResponseEntity<User> user(Principal principal){
+		log.info("principal = {}", principal);
+		User user = userRepository.findByUsername(principal.getName()).orElseThrow(
+			() -> new CustomException(ErrorCode.INVALID_TOKEN_ERROR)
+		);
+		return ResponseEntity.ok(user);
 	}
 }
