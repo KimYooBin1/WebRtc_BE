@@ -4,6 +4,7 @@ import static com.example.webrtc.chating.dto.ChatDto.Type.*;
 import static com.example.webrtc.common.exception.ErrorCode.*;
 import static java.time.LocalDateTime.*;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.context.event.EventListener;
@@ -50,14 +51,27 @@ public class ChatController {
 	@MessageMapping("/chatroom/{roomId}/join")
 	@SendTo("/topic/chatroom/{roomId}")
 	@Transactional	//한 tarnsactional 안에서 처리해주기 위해 설정
-	public ChatDto chatRoomJoin(@Payload ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor){
+	public ChatDto chatRoomJoin(@Payload ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor, Principal principal){
+		if(principal == null){
+			log.error("principal is null");
+			throw new CustomException(CHAT_ROOM_JOIN_ERROR);
+		}
+		log.info("principal = {}", principal.getName());
 		log.info("chatDto = {}",chatDto);
-		String sender = chatDto.getSender();
+		String sender = principal.getName();
 		Chatroom chatroom = chatroomRepository.findById(chatDto.getRoomId()).orElseThrow(
 			// TODO : 해당 id의 chatroom이 없을 경우
+			() ->{
+				log.error("해당 id의 chatroom이 없습니다");
+				return new CustomException(CHAT_ROOM_JOIN_ERROR);
+			}
 		);
 		User user = userRepository.findByName(sender).orElseThrow(
 			// TODO : 이름이 없을때는 어떻게 처리할 것인가
+			() ->{
+				log.error("해당 이름의 user가 없습니다");
+				return new CustomException(CHAT_ROOM_JOIN_ERROR);
+			}
 		);
 
 		// sessionDisconnect event 를 사용하기 때문에 해당 session 에 user 정보와 chatroom 정보 입력
@@ -132,7 +146,7 @@ public class ChatController {
 
 	@EventListener
 	public void userConnect(SessionConnectedEvent event) {
-		log.info("event = {}",event.getMessage());
-		log.info("event = {}",event);
+		log.info("event.getMessage = {}",event.getMessage());
+		// log.info("event = {}",event);
 	}
 }
