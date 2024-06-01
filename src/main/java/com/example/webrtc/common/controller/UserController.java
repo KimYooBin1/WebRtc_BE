@@ -50,8 +50,9 @@ public class UserController {
 	}
 	@GetMapping("/user")
 	public ResponseEntity<User> user(Principal principal){
-		log.info("principal = {}", principal);
-		User user = userRepository.findByUsername(principal.getName()).orElseThrow(
+		log.info("principal = {}", principal.getName());
+		// TODO : principal에서 username 을 가져오는줄 알았는데 그냥 name을 가져온다. 기본 로그인일 때 확인 필요
+		User user = userRepository.findByName(principal.getName()).orElseThrow(
 			() -> new CustomException(ErrorCode.INVALID_TOKEN_ERROR)
 		);
 		return ResponseEntity.ok(user);
