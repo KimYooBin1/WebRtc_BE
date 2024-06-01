@@ -29,13 +29,16 @@ public class StompInterceptor implements ChannelInterceptor {
 
 		StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 		log.info("jwt header = {}", headerAccessor);
+		// log.info("jwt header Detail = {}", headerAccessor.getHeartbeat());
 		StompCommand command = headerAccessor.getCommand();
 
 		//subscribe 에서 JWT를 활용해 principal 설정
 		if(command.equals(DISCONNECT)){
 			return message;
 		}
-		String authorizationHeader = headerAccessor.getNativeHeader("Authorization").get(0);
+		// String authorizationHeader = headerAccessor.getNativeHeader("Authorization").get(0);
+		String authorizationHeader = null;
+
 		log.info("headerAccess = {}", authorizationHeader);
 		if(authorizationHeader == null){
 			log.info("token이 없다");
