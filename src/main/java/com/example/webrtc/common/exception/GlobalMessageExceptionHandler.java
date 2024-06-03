@@ -22,9 +22,9 @@ public class GlobalMessageExceptionHandler {
 	@MessageExceptionHandler(CustomException.class)
 	public void handleCustomException(CustomException e, Principal principal){
 		log.info("Stomp 예외 발생");
-		log.info("principal = {}", principal.getName());
+		log.info("Exception principal = {}", principal.getName());
 		// TODO : 방번호를 어떻게 받아올지, sub 주소는 어떻게 해야될지
-		template.convertAndSendToUser(principal.getName(), "/topic/chatroom/552",
+		template.convertAndSendToUser(principal.getName(), "/topic/error",
 			Objects.requireNonNull(methodProvider.globalException(e).getBody()));
 	}
 	private class MethodProvider implements GlobalExceptionHandlerInterface{

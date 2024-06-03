@@ -53,7 +53,7 @@ public class ChatController {
 	@Transactional	//한 tarnsactional 안에서 처리해주기 위해 설정
 	public ChatDto chatRoomJoin(@Payload ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor, Principal principal){
 		String loginUser = chatDto.getSender();
-		log.info("loginUser = {}", principal);
+		log.info("loginUser = {}", principal.getName());
 		if(loginUser == null){
 			log.error("principal is null");
 			throw new CustomException(CHAT_ROOM_JOIN_ERROR);
@@ -75,14 +75,14 @@ public class ChatController {
 			}
 		);
 
-		// sessionDisconnect event 를 사용하기 때문에 해당 session 에 user 정보와 chatroom 정보 입력
-		headerAccessor.getSessionAttributes().put("roomId", chatroom.getId());
-		headerAccessor.getSessionAttributes().put("userId", user.getId());
-
 		if(chatroom.getLimitUserCnt() <= chatroom.getUserCnt()){
 			log.info("인원 제한");
 			throw new CustomException(CHAT_ROOM_JOIN_ERROR);
 		}
+		// sessionDisconnect event 를 사용하기 때문에 해당 session 에 user 정보와 chatroom 정보 입력
+		headerAccessor.getSessionAttributes().put("roomId", chatroom.getId());
+		headerAccessor.getSessionAttributes().put("userId", user.getId());
+
 		chatroom.plus();
 		chatroom.connectUser(user);
 
@@ -128,9 +128,17 @@ public class ChatController {
 		log.info("headerAccessor : {}", headerAccessor);
 		Long roomId = (Long)headerAccessor.getSessionAttributes().get("roomId");
 		Long userId = (Long)headerAccessor.getSessionAttributes().get("userId");
-		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(
 
+		// 비정상적인 종료로 해당 roomId, userId 가 없을 경우
+		if(roomId == null || userId == null){
+			log.error("roomId or userId is null");
+			return;
+		}
+		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(
+			// TODO : 해당 exception 다시 처리하기
+			() -> new CustomException(CHAT_ROOM_JOIN_ERROR)
 		);
+
 		User user = userRepository.findById(userId).orElseThrow(
 
 		);

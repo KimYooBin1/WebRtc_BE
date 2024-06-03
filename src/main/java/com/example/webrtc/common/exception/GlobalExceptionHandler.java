@@ -18,13 +18,13 @@ public class GlobalExceptionHandler implements GlobalExceptionHandlerInterface{
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ErrorResponse> globalException(CustomException e) {
 		log.info("exception 발생");
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+		// HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
 		ErrorResponse response = ErrorResponse.builder()
 			.timeStamp(now())
 			.status(e.getErrorCode().getStatus())
 			.error(e.getErrorCode().getCode())
 			.message(e.getMessage())
-			.path(request.getRequestURI())
+			// .path(request.getRequestURI())
 			.build();
 		return ResponseEntity.status(e.getErrorCode().getStatus()).body(response);
 	}
