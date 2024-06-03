@@ -3,7 +3,6 @@ package com.example.webrtc.common.entity;
 import static lombok.AccessLevel.*;
 
 import com.example.webrtc.chating.entity.Chatroom;
-import com.example.webrtc.common.dto.SignDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -26,7 +25,7 @@ public class User {
 	private String username;
 	private String name;
 	// 인증을 위해서
-	private String phoneNum;
+	private String mobile;
 	private String email;
 	// private String ID;
 	private String password;
@@ -40,17 +39,18 @@ public class User {
 		this.name = name;
 		this.password = password;
 	}
-	public User(String username, String name, String password, String email, String phoneNum) {
+	public User(String username, String name, String password, String email, String mobile) {
 		this.username = username;
 		this.name = name;
-		this.phoneNum = phoneNum;
+		this.mobile = mobile;
 		this.email = email;
 		this.password = password;
 	}
 
-	public User(String username, String name, String email) {
+	public User(String username, String name, String email, String mobile) {
 		this.username = username;
 		this.name = name;
 		this.email = email;
+		this.mobile = mobile;
 	}
 }

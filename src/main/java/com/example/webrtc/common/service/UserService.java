@@ -9,17 +9,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.webrtc.common.dto.CustomUserDetails;
 import com.example.webrtc.common.dto.LoginDto;
+import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.dto.SignDto;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements UserDetailsService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -48,13 +50,13 @@ public class UserService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		log.info("UserDetails username = {}", username);
 		//DB에서 조회
 		User user = userRepository.findByUsername((username)).orElse(null);
 		if (user != null) {
 			//UserDetails에 담아서 return하면 AutneticationManager가 검증 함
-			return new CustomUserDetails(user);
+			return new PrincipalDetails(user);
 		}
-
 		return null;
 	}
 }

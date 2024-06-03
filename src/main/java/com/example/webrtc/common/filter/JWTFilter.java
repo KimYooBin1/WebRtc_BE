@@ -7,9 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.webrtc.common.dto.CustomOAuth2User;
-import com.example.webrtc.common.dto.CustomUserDetails;
-import com.example.webrtc.common.dto.UserDto;
+import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.utils.JWTUtil;
 
@@ -29,20 +27,6 @@ public class JWTFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException,
 		IOException {
-
-		// //request에서 Authorization 헤더를 찾음
-		// String authorization= request.getHeader("Authorization");
-		// log.info("authorization = {}", authorization);
-		//
-		// //Authorization 헤더 검증
-		// if (authorization == null || !authorization.startsWith("Bearer ")) {
-		//
-		// 	System.out.println("token null");
-		// 	filterChain.doFilter(request, response);
-		//
-		// 	//조건이 해당되면 메소드 종료 (필수)
-		// 	return;
-		// }
 		//cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
 		String token = null;
 		Cookie[] cookies = request.getCookies();
@@ -80,28 +64,26 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		//토큰에서 username과 role 획득
 		String username = jwtUtil.getUsername(token);
-		log.info("username = {}", username);
+		log.info("username == {}", username);
 		Authentication authToken = null;
 		// oauth2 로그인인지 일반 로그인인지 판별
 		if(username.startsWith("naver")){
 			//userDTO를 생성하여 값 set
-			UserDto userDTO = new UserDto("", username);
-			userDTO.setUsername(username);
-
-			//UserDetails에 회원 정보 객체 담기
-			CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
-
+			log.info("naver login check");
+			// 해당 username을 가진 임의의 객체 생성
+			User user = new User(username,"", "", "");
+			PrincipalDetails principalDetails = new PrincipalDetails(user);
 			//스프링 시큐리티 인증 토큰 생성
-			authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+			authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
 		}
 		else{
 			//userEntity를 생성하여 값 set
 			User user = new User(username, "");
-			user.setName(username);
-			user.setPassword("temppassword");
+			// user.setName(username);
+			// user.setPassword("temppassword");
 
 			//UserDetails에 회원 정보 객체 담기
-			CustomUserDetails customUserDetails = new CustomUserDetails(user);
+			PrincipalDetails customUserDetails = new PrincipalDetails(user);
 
 			//스프링 시큐리티 인증 토큰 생성
 			authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());

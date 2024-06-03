@@ -1,9 +1,9 @@
 package com.example.webrtc.common.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.webrtc.common.dto.LoginDto;
+import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.dto.SignDto;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.exception.CustomException;
@@ -48,12 +49,15 @@ public class UserController {
 		}
 		return ResponseEntity.ok(all);
 	}
+
+	// TODO : 기본 로그인 일떄도 확인 필요
 	@GetMapping("/user")
-	public ResponseEntity<User> user(Principal principal){
-		log.info("principal = {}", principal);
-		User user = userRepository.findByUsername(principal.getName()).orElseThrow(
+	public ResponseEntity<User> user(@AuthenticationPrincipal PrincipalDetails user) {
+		log.info("userName = {}", user.getUsername());
+
+		User result = userRepository.findByUsername(user.getUsername()).orElseThrow(
 			() -> new CustomException(ErrorCode.INVALID_TOKEN_ERROR)
 		);
-		return ResponseEntity.ok(user);
+		return ResponseEntity.ok(result);
 	}
 }

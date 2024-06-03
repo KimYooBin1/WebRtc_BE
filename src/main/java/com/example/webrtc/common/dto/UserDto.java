@@ -1,8 +1,10 @@
 package com.example.webrtc.common.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class UserDto {
 	private String name;
 	private String username;

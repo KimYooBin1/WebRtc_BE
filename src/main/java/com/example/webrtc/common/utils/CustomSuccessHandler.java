@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.webrtc.common.dto.CustomOAuth2User;
+import com.example.webrtc.common.dto.PrincipalDetails;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -32,9 +32,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		IOException, ServletException {
 
 		//OAuth2User
-		CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
+		PrincipalDetails customUserDetails = (PrincipalDetails) authentication.getPrincipal();
 
 		String username = customUserDetails.getUsername();
+		log.info("jwt username = {}", username);
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -43,9 +44,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String token = jwtUtil.createJwt(username, 60*60*6000L);
 
-		// response.addHeader("Authorization", "Bearer " + token);
 		response.addCookie(createCookie("Authorization", token));
-		response.sendRedirect("http://localhost:3000/mainPage");
+		response.sendRedirect("http://localhost:3000/loginSuccess");
 	}
 
 	// TODO : https을 통해서만 set-cookie가 가능하다. https로 변경해야함

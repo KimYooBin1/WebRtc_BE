@@ -9,8 +9,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 @ToString
 public class CustomOAuth2User implements OAuth2User {
 	private final UserDto userDto;
