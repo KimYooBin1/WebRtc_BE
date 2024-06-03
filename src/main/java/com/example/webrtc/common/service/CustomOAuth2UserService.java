@@ -6,10 +6,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.example.webrtc.common.dto.CustomOAuth2User;
 import com.example.webrtc.common.dto.NaverResponse;
 import com.example.webrtc.common.dto.OAuth2Response;
-import com.example.webrtc.common.dto.UserDto;
+import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.repository.UserRepository;
 
@@ -39,21 +38,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
 		User existData = userRepository.findByUsername(username).orElse(null);
 		log.info("oAuth2Response.getName() = {}", oAuth2Response.getName());
+		log.info("existData = {}", existData);
 		if(existData == null){
 			User user = new User(username, oAuth2Response.getName(), oAuth2Response.getEmail());
 			userRepository.save(user);
-			UserDto userDTO = new UserDto(oAuth2Response.getName(), username);
 
-			return new CustomOAuth2User(userDTO);
+			return new PrincipalDetails(user);
 		}
 		else{
 			existData.setEmail(oAuth2Response.getEmail());
 			existData.setName(oAuth2Response.getName());
 
 			userRepository.save(existData);
-			UserDto userDTO = new UserDto(oAuth2Response.getName(), username);
-
-			return new CustomOAuth2User(userDTO);
+			return new PrincipalDetails(existData);
 		}
 	}
 }

@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.webrtc.common.dto.CustomUserDetails;
+import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.utils.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,12 +48,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws
 		IOException {
-		// IdResponse idResponse = new IdResponse(1L);
-		// // Jackson ObjectMapper를 사용하여 idResponse 객체를 JSON 문자열로 변환합니다.
-		// String jsonResponse = objectMapper.writeValueAsString(idResponse);
-		// response.getWriter().write(jsonResponse);
-		//password
-		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+		PrincipalDetails customUserDetails = (PrincipalDetails) authentication.getPrincipal();
 
 		String username = customUserDetails.getUsername();
 
@@ -71,16 +66,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		// 응답 바디에 JSON 쓰기
 		response.getWriter().write(username);
-		// response.sendRedirect("http://localhost:3000/");
 	}
 
 	//로그인 실패시 실행하는 메소드
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 		org.springframework.security.core.AuthenticationException failed) throws IOException, ServletException {
-		// IdResponse idResponse = new IdResponse(0L);
-		// String jsonResponse = objectMapper.writeValueAsString(idResponse);
-		// response.getWriter().write(jsonResponse);
+		// TODO : 실패했을때 로직 추가하기
 		response.setStatus(401);
 	}
 

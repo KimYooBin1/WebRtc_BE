@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.webrtc.common.dto.CustomOAuth2User;
 import com.example.webrtc.common.dto.LoginDto;
+import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.dto.SignDto;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.exception.CustomException;
@@ -52,10 +52,10 @@ public class UserController {
 
 	// TODO : 기본 로그인 일떄도 확인 필요
 	@GetMapping("/user")
-	public ResponseEntity<User> user(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		log.info("userName = {}", customOAuth2User.getUsername());
+	public ResponseEntity<User> user(@AuthenticationPrincipal PrincipalDetails user) {
+		log.info("userName = {}", user.getUsername());
 
-		User result = userRepository.findByUsername(customOAuth2User.getUsername()).orElseThrow(
+		User result = userRepository.findByUsername(user.getUsername()).orElseThrow(
 			() -> new CustomException(ErrorCode.INVALID_TOKEN_ERROR)
 		);
 		return ResponseEntity.ok(result);

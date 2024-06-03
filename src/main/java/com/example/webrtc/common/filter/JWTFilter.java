@@ -7,9 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.webrtc.common.dto.CustomOAuth2User;
-import com.example.webrtc.common.dto.CustomUserDetails;
-import com.example.webrtc.common.dto.UserDto;
+import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.utils.JWTUtil;
 
@@ -72,14 +70,11 @@ public class JWTFilter extends OncePerRequestFilter {
 		if(username.startsWith("naver")){
 			//userDTO를 생성하여 값 set
 			log.info("naver login check");
-			UserDto userDTO = new UserDto();
-			userDTO.setUsername(username);
-			userDTO.setName("");
-			//UserDetails에 회원 정보 객체 담기
-			CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
-
+			// 해당 username을 가진 임의의 객체 생성
+			User user = new User(username,"", "");
+			PrincipalDetails principalDetails = new PrincipalDetails(user);
 			//스프링 시큐리티 인증 토큰 생성
-			authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+			authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
 		}
 		else{
 			//userEntity를 생성하여 값 set
@@ -88,7 +83,7 @@ public class JWTFilter extends OncePerRequestFilter {
 			// user.setPassword("temppassword");
 
 			//UserDetails에 회원 정보 객체 담기
-			CustomUserDetails customUserDetails = new CustomUserDetails(user);
+			PrincipalDetails customUserDetails = new PrincipalDetails(user);
 
 			//스프링 시큐리티 인증 토큰 생성
 			authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
