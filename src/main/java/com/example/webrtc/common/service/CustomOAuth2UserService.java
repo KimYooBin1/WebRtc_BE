@@ -40,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		log.info("oAuth2Response.getName() = {}", oAuth2Response.getName());
 		log.info("existData = {}", existData);
 		if(existData == null){
-			User user = new User(username, oAuth2Response.getName(), oAuth2Response.getEmail());
+			User user = new User(username, oAuth2Response.getName(), oAuth2Response.getEmail(), oAuth2Response.getMobile());
 			userRepository.save(user);
 
 			return new PrincipalDetails(user);
@@ -48,7 +48,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		else{
 			existData.setEmail(oAuth2Response.getEmail());
 			existData.setName(oAuth2Response.getName());
-
+			existData.setMobile(oAuth2Response.getMobile());
 			userRepository.save(existData);
 			return new PrincipalDetails(existData);
 		}

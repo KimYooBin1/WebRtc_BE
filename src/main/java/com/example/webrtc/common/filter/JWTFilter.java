@@ -71,7 +71,7 @@ public class JWTFilter extends OncePerRequestFilter {
 			//userDTO를 생성하여 값 set
 			log.info("naver login check");
 			// 해당 username을 가진 임의의 객체 생성
-			User user = new User(username,"", "");
+			User user = new User(username,"", "", "");
 			PrincipalDetails principalDetails = new PrincipalDetails(user);
 			//스프링 시큐리티 인증 토큰 생성
 			authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
