@@ -3,7 +3,6 @@ package com.example.webrtc.common.entity;
 import static lombok.AccessLevel.*;
 
 import com.example.webrtc.chating.entity.Chatroom;
-import com.example.webrtc.common.dto.SignDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;

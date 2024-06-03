@@ -52,13 +52,14 @@ public class ChatController {
 	@SendTo("/topic/chatroom/{roomId}")
 	@Transactional	//한 tarnsactional 안에서 처리해주기 위해 설정
 	public ChatDto chatRoomJoin(@Payload ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor, Principal principal){
-		if(principal == null){
+		String loginUser = chatDto.getSender();
+		log.info("loginUser = {}", principal);
+		if(loginUser == null){
 			log.error("principal is null");
 			throw new CustomException(CHAT_ROOM_JOIN_ERROR);
 		}
-		log.info("principal = {}", principal.getName());
+		log.info("principal = {}", loginUser);
 		log.info("chatDto = {}",chatDto);
-		String sender = principal.getName();
 		Chatroom chatroom = chatroomRepository.findById(chatDto.getRoomId()).orElseThrow(
 			// TODO : 해당 id의 chatroom이 없을 경우
 			() ->{
@@ -66,7 +67,7 @@ public class ChatController {
 				return new CustomException(CHAT_ROOM_JOIN_ERROR);
 			}
 		);
-		User user = userRepository.findByName(sender).orElseThrow(
+		User user = userRepository.findByName(loginUser).orElseThrow(
 			// TODO : 이름이 없을때는 어떻게 처리할 것인가
 			() ->{
 				log.error("해당 이름의 user가 없습니다");
@@ -86,10 +87,10 @@ public class ChatController {
 		chatroom.connectUser(user);
 
 
-		chatDto.setMessage(sender+"님이 들어왔습니다");
+		chatDto.setMessage(loginUser +"님이 들어왔습니다");
 		chatDto.setTime(now());
 
-		log.info("{}님이  {}번 방에 접속", sender, chatDto.getRoomId());
+		log.info("{}님이  {}번 방에 접속", loginUser, chatDto.getRoomId());
 		return chatDto;
 	}
 

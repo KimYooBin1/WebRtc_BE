@@ -16,10 +16,12 @@ import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements UserDetailsService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -48,6 +50,7 @@ public class UserService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		log.info("UserDetails username = {}", username);
 		//DB에서 조회
 		User user = userRepository.findByUsername((username)).orElse(null);
 		if (user != null) {

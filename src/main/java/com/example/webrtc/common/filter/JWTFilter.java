@@ -29,20 +29,6 @@ public class JWTFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException,
 		IOException {
-
-		// //request에서 Authorization 헤더를 찾음
-		// String authorization= request.getHeader("Authorization");
-		// log.info("authorization = {}", authorization);
-		//
-		// //Authorization 헤더 검증
-		// if (authorization == null || !authorization.startsWith("Bearer ")) {
-		//
-		// 	System.out.println("token null");
-		// 	filterChain.doFilter(request, response);
-		//
-		// 	//조건이 해당되면 메소드 종료 (필수)
-		// 	return;
-		// }
 		//cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
 		String token = null;
 		Cookie[] cookies = request.getCookies();
@@ -80,14 +66,15 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		//토큰에서 username과 role 획득
 		String username = jwtUtil.getUsername(token);
-		log.info("username = {}", username);
+		log.info("username == {}", username);
 		Authentication authToken = null;
 		// oauth2 로그인인지 일반 로그인인지 판별
 		if(username.startsWith("naver")){
 			//userDTO를 생성하여 값 set
-			UserDto userDTO = new UserDto("", username);
+			log.info("naver login check");
+			UserDto userDTO = new UserDto();
 			userDTO.setUsername(username);
-
+			userDTO.setName("");
 			//UserDetails에 회원 정보 객체 담기
 			CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
 
@@ -97,8 +84,8 @@ public class JWTFilter extends OncePerRequestFilter {
 		else{
 			//userEntity를 생성하여 값 set
 			User user = new User(username, "");
-			user.setName(username);
-			user.setPassword("temppassword");
+			// user.setName(username);
+			// user.setPassword("temppassword");
 
 			//UserDetails에 회원 정보 객체 담기
 			CustomUserDetails customUserDetails = new CustomUserDetails(user);

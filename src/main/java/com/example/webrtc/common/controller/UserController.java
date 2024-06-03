@@ -1,15 +1,16 @@
 package com.example.webrtc.common.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.webrtc.common.dto.CustomOAuth2User;
 import com.example.webrtc.common.dto.LoginDto;
 import com.example.webrtc.common.dto.SignDto;
 import com.example.webrtc.common.entity.User;
@@ -48,13 +49,15 @@ public class UserController {
 		}
 		return ResponseEntity.ok(all);
 	}
+
+	// TODO : 기본 로그인 일떄도 확인 필요
 	@GetMapping("/user")
-	public ResponseEntity<User> user(Principal principal){
-		log.info("principal = {}", principal.getName());
-		// TODO : principal에서 username 을 가져오는줄 알았는데 그냥 name을 가져온다. 기본 로그인일 때 확인 필요
-		User user = userRepository.findByName(principal.getName()).orElseThrow(
+	public ResponseEntity<User> user(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		log.info("userName = {}", customOAuth2User.getUsername());
+
+		User result = userRepository.findByUsername(customOAuth2User.getUsername()).orElseThrow(
 			() -> new CustomException(ErrorCode.INVALID_TOKEN_ERROR)
 		);
-		return ResponseEntity.ok(user);
+		return ResponseEntity.ok(result);
 	}
 }
