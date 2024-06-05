@@ -1,5 +1,7 @@
 package com.example.webrtc.common.controller;
 
+import static com.example.webrtc.common.exception.ErrorCode.*;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,6 @@ import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.dto.SignDto;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.exception.CustomException;
-import com.example.webrtc.common.exception.ErrorCode;
 import com.example.webrtc.common.repository.UserRepository;
 import com.example.webrtc.common.service.UserService;
 
@@ -45,7 +46,7 @@ public class UserController {
 		log.info("principal = {}", Authorization);
 		List<User> all = userRepository.findAll();
 		if(!all.isEmpty()){
-			throw new CustomException(ErrorCode.INVALID_TOKEN_ERROR);
+			throw new CustomException(INVALID_TOKEN_ERROR);
 		}
 		return ResponseEntity.ok(all);
 	}
@@ -53,11 +54,13 @@ public class UserController {
 	// TODO : 기본 로그인 일떄도 확인 필요
 	@GetMapping("/user")
 	public ResponseEntity<User> user(@AuthenticationPrincipal PrincipalDetails user) {
-		log.info("userName = {}", user.getUsername());
+		log.info("principalUserName = {}", user);
 
 		User result = userRepository.findByUsername(user.getUsername()).orElseThrow(
-			() -> new CustomException(ErrorCode.INVALID_TOKEN_ERROR)
+			// TODO : exception 설정하기
+			() -> new CustomException(INVALID_TOKEN_ERROR)
 		);
+		log.info("result = {}", result);
 		return ResponseEntity.ok(result);
 	}
 }

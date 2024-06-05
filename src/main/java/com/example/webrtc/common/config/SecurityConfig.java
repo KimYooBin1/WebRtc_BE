@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationCodeGrantFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -84,7 +83,7 @@ public class SecurityConfig {
 		//경로별 인가 작업
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/user/**", "/chatroom", "/websocket/**").permitAll()
+				.requestMatchers("/user/**", "/chatroom", "/websocket/**", "/").permitAll()
 				// .requestMatchers("/admin").hasRole("ADMIN")
 				.anyRequest().authenticated());
 		//security 내부의 exception 처리를 위해 custom jwtAuthenticationEntryPoint 등록

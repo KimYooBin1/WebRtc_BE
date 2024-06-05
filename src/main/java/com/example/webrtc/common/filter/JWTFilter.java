@@ -80,7 +80,7 @@ public class JWTFilter extends OncePerRequestFilter {
 					principalDetails.getAuthorities());
 			} else {
 				//userEntity를 생성하여 값 set
-				User user = new User(username, "");
+				User user = new User(username, "","","");
 				// user.setName(username);
 				// user.setPassword("temppassword");
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Component;
 import com.example.webrtc.common.dto.PrincipalDetails;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -44,17 +44,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String token = jwtUtil.createJwt(username, 60*60*6000L);
 
-		response.addCookie(createCookie("Authorization", token));
+		response.addHeader("Set-Cookie", createCookie(token).toString());
 		response.sendRedirect("http://localhost:3000/loginSuccess");
 	}
 
-	// TODO : https을 통해서만 set-cookie가 가능하다. https로 변경해야함
-	private Cookie createCookie(String key, String value) {
-		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(60*60*6000);
-		//cookie.setSecure(true);
-		cookie.setPath("/");
-		cookie.setHttpOnly(true);
-		return cookie;
+	private ResponseCookie createCookie(String value) {
+		return ResponseCookie.from("Authorization", value)
+			.maxAge(60*60*6000)
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.path("/")
+			.build();
 	}
 }

@@ -52,12 +52,7 @@ public class ChatController {
 	@SendTo("/topic/chatroom/{roomId}")
 	@Transactional	//한 tarnsactional 안에서 처리해주기 위해 설정
 	public ChatDto chatRoomJoin(@Payload ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor, Principal principal){
-		String loginUser = chatDto.getSender();
-		log.info("loginUser = {}", principal.getName());
-		if(loginUser == null){
-			log.error("principal is null");
-			throw new CustomException(CHAT_ROOM_JOIN_ERROR);
-		}
+		String loginUser = principal.getName();
 		log.info("principal = {}", loginUser);
 		log.info("chatDto = {}",chatDto);
 		Chatroom chatroom = chatroomRepository.findById(chatDto.getRoomId()).orElseThrow(
