@@ -21,6 +21,7 @@ import com.example.webrtc.common.filter.LoginFilter;
 import com.example.webrtc.common.service.CustomOAuth2UserService;
 import com.example.webrtc.common.utils.CustomSuccessHandler;
 import com.example.webrtc.common.utils.JWTUtil;
+import com.example.webrtc.common.utils.JwtAuthenticationEntryPoint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomSuccessHandler customSuccessHandler;
 	private final JWTUtil jwtUtil;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -85,6 +87,11 @@ public class SecurityConfig {
 				.requestMatchers("/user/**", "/chatroom", "/websocket/**").permitAll()
 				// .requestMatchers("/admin").hasRole("ADMIN")
 				.anyRequest().authenticated());
+		//security 내부의 exception 처리를 위해 custom jwtAuthenticationEntryPoint 등록
+		http
+			.exceptionHandling((exception) -> exception
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+
 		//JWTFilter 등록
 		http
 			.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

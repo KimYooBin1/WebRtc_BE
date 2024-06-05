@@ -16,8 +16,10 @@ public enum ErrorCode {
 	//chatRoom
 	CHAT_ROOM_JOIN_ERROR(400,"CHATROOM-001", "방에 인원이 다 찼습니다"),
 	//jwt
-	INVALID_TOKEN_ERROR(400, "AUTH-001", "jwt 토큰이 유효하지 않습니다."),
-	ALREADY_RE_ISSUED_TOKEN_ERROR(400, "AUTH-002", "이미 액세스 토큰 재발급에 사용된 리프레시 토큰입니다.");
+	INVALID_TOKEN_ERROR(401, "AUTH-001", "jwt 토큰이 유효하지 않습니다."),
+	EXPIRED_TOKEN_ERROR(401, "AUTH-002", "jwt 토큰이 만료되었습니다."),
+	NULL_TOKEN_ERROR(401, "AUTH-003", "jwt 토큰이 존재하지 않습니다."),
+	ALREADY_RE_ISSUED_TOKEN_ERROR(400, "AUTH-004", "이미 액세스 토큰 재발급에 사용된 리프레시 토큰입니다.");
 	//
 	// //auth
 	// AUTHENTICATION_ERROR(401, "AUTH-003", "인증에 실패했습니다. 인증 수단이 유효한지 확인하세요."),
