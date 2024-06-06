@@ -1,8 +1,8 @@
 package com.example.webrtc.chating.service;
 
-import java.util.ArrayList;
+import static com.example.webrtc.common.exception.ErrorCode.*;
+
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,39 +12,41 @@ import com.example.webrtc.chating.entity.Chatroom;
 import com.example.webrtc.chating.entity.CreateRoom;
 import com.example.webrtc.chating.repository.ChatroomRepository;
 import com.example.webrtc.common.entity.User;
+import com.example.webrtc.common.exception.CustomException;
+import com.example.webrtc.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ChatroomService {
 	private final ChatroomRepository chatroomRepository;
 	public List<Chatroom> findAllRoom(){
-		// TODO : 값이 비어있으면?
 		return chatroomRepository.findAll();
 	}
 
 	public Chatroom findRoomById(Long id) {
-		// TODO : 값이 비어있으면?
-		return chatroomRepository.findById(id).orElseThrow();
+		return chatroomRepository.findById(id).orElseThrow(
+			() ->{
+				log.error("해당 id의 chatroom이 없습니다");
+				return new CustomException(CHAT_ROOM_NOT_FOUND_ERROR);
+			}
+		);
 	}
-
 	public Chatroom findRoomByName(String name) {
-		// TODO : 값이 비어있으면?
-		return chatroomRepository.findByRoomName(name);
+		return chatroomRepository.findByRoomName(name).orElse(null);
 	}
 
 	public List<User> findChatRoomUsers(Long roomId) {
-		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(
-			// TODO : user가 1명도 없다?
-		);
-		return chatroom.getUserList();
+		Chatroom chatroom = chatroomRepository.findById(roomId).orElse(null);
+		return chatroom != null ? chatroom.getUserList() : null;
 	}
 
 	@Transactional
 	public Chatroom createChatRoom(CreateRoom request) {
-		// TODO : room 이름 중복 확인
 		Chatroom chatroom;
 		if(StringUtils.hasText(request.getPassword())){
 			chatroom = new Chatroom(request.getRoomName(), request.getLimitUserCnt(), request.getPassword());

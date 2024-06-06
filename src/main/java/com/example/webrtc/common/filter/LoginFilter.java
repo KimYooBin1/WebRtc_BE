@@ -1,5 +1,7 @@
 package com.example.webrtc.common.filter;
 
+import static com.example.webrtc.common.exception.ErrorCode.*;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -9,10 +11,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.webrtc.common.dto.PrincipalDetails;
+import com.example.webrtc.common.exception.CustomException;
+import com.example.webrtc.common.exception.ErrorCode;
 import com.example.webrtc.common.utils.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -54,7 +59,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
-
+		//jwt token 만료시간은 30분
 		String token = jwtUtil.createJwt(username, 60*60*1000L);
 
 		response.addHeader("Set-Cookie", createCookie("Authorization", token).toString());
@@ -68,16 +73,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	//로그인 실패시 실행하는 메소드
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-		org.springframework.security.core.AuthenticationException failed) throws IOException, ServletException {
-		// TODO : 실패했을때 로직 추가하기
-		response.setStatus(401);
+		AuthenticationException failed) throws IOException, ServletException {
+		log.error("error = {}",failed.getMessage());
+		throw new CustomException(CREDENTIALS_NOT_MATCHED_ERROR);
 	}
 
 	private ResponseCookie createCookie(String key, String value) {
 		log.info("createCookie");
 		return ResponseCookie.from(key, value)
-			.maxAge(60*60*6000)
-			.httpOnly(true)
+			.maxAge(60*30)
+			.httpOnly(false)
 			.secure(true)
 			.sameSite("None")
 			.path("/")

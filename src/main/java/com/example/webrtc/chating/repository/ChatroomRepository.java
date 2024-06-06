@@ -10,7 +10,7 @@ import com.example.webrtc.chating.entity.Chatroom;
 @Repository
 public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
 	// Optional<Chatroom> findByRoomName(String name);
-	Chatroom findByRoomName(String name);
+	Optional<Chatroom> findByRoomName(String name);
 
 
 }

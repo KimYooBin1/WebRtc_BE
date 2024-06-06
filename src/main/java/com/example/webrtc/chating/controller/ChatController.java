@@ -25,11 +25,10 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import com.example.webrtc.chating.dto.ChatDto;
 import com.example.webrtc.chating.dto.UserListDto;
 import com.example.webrtc.chating.entity.Chatroom;
-import com.example.webrtc.chating.repository.ChatroomRepository;
 import com.example.webrtc.chating.service.ChatroomService;
 import com.example.webrtc.common.entity.User;
 import com.example.webrtc.common.exception.CustomException;
-import com.example.webrtc.common.repository.UserRepository;
+import com.example.webrtc.common.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ChatController {
-	// TODO : controller 단에서 repository 바로 접근하지 말고 service 거치게 바꾸기
-	private final ChatroomRepository chatroomRepository;
-	private final UserRepository userRepository;
+	private final UserService userService;
 	private final ChatroomService chatroomService;
 	private final SimpMessageSendingOperations template;
 
@@ -51,28 +48,17 @@ public class ChatController {
 	@MessageMapping("/chatroom/{roomId}/join")
 	@SendTo("/topic/chatroom/{roomId}")
 	@Transactional	//한 tarnsactional 안에서 처리해주기 위해 설정
+	// TODO : @AuthenticationPrincipal로 유저정보를 받아올 수는 없는지
 	public ChatDto chatRoomJoin(@Payload ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor, Principal principal){
 		String loginUser = principal.getName();
-		log.info("principal = {}", loginUser);
-		log.info("chatDto = {}",chatDto);
-		Chatroom chatroom = chatroomRepository.findById(chatDto.getRoomId()).orElseThrow(
-			// TODO : 해당 id의 chatroom이 없을 경우
-			() ->{
-				log.error("해당 id의 chatroom이 없습니다");
-				return new CustomException(CHAT_ROOM_JOIN_ERROR);
-			}
-		);
-		User user = userRepository.findByUsername(loginUser).orElseThrow(
-			// TODO : 이름이 없을때는 어떻게 처리할 것인가
-			() ->{
-				log.error("해당 이름의 user가 없습니다");
-				return new CustomException(CHAT_ROOM_JOIN_ERROR);
-			}
-		);
+		log.info("roomId = {}", chatDto.getRoomId());
+		Chatroom chatroom = chatroomService.findRoomById(chatDto.getRoomId());
+		//principal 이 없으면 @MessageExceptionHandler로 처리가 안돼는데 굳이 잡아줄 이유가 있는지
+		User user = userService.findUserByName(loginUser);
 
 		if(chatroom.getLimitUserCnt() <= chatroom.getUserCnt()){
 			log.info("인원 제한");
-			throw new CustomException(CHAT_ROOM_JOIN_ERROR);
+			throw new CustomException(CHAT_ROOM_LIMITED_USER_ERROR);
 		}
 		// sessionDisconnect event 를 사용하기 때문에 해당 session 에 user 정보와 chatroom 정보 입력
 		headerAccessor.getSessionAttributes().put("roomId", chatroom.getId());
@@ -96,16 +82,11 @@ public class ChatController {
 	@SendTo("/topic/chatroom/{roomId}")
 	@Transactional	//한 tarnsactional 안에서 처리해주기 위해 설정
 	public ChatDto chatRoomMessageSend(@Payload ChatDto chatDto) {
-		chatroomRepository.findById(chatDto.getRoomId()).orElseThrow(
-			// TODO : 해당 id의 chatroom이 없을 경우
-		);
+		chatroomService.findRoomById(chatDto.getRoomId());
 		chatDto.setTime(now());
-		// TODO : message가 비어있을때 BE 에서 처리할지 FE 에서 처리할지
 		log.info("{} : {}", chatDto.getSender(), chatDto.getMessage());
 		return chatDto;
 	}
-
-	// TODO : 채팅방을 나갔을떄
 
 	@GetMapping("/chatroom/{roomId}/users")
 	public ResponseEntity<List<UserListDto>> chatRoomUserList(@PathVariable Long roomId){
@@ -129,15 +110,8 @@ public class ChatController {
 			log.error("roomId or userId is null");
 			return;
 		}
-		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(
-			// TODO : 해당 exception 다시 처리하기
-			() -> new CustomException(CHAT_ROOM_JOIN_ERROR)
-		);
-
-		User user = userRepository.findById(userId).orElseThrow(
-
-		);
-		// TODO : chatroom 의 userlist 에서 해당 user 삭제하기,
+		Chatroom chatroom = chatroomService.findRoomById(roomId);
+		User user = userService.findUserById(userId);
 		chatroom.disconnectUser(user);
 		chatroom.des();
 		ChatDto chat = ChatDto.builder()
@@ -151,6 +125,5 @@ public class ChatController {
 	@EventListener
 	public void userConnect(SessionConnectedEvent event) {
 		log.info("event.getMessage = {}",event.getMessage());
-		// log.info("event = {}",event);
 	}
 }

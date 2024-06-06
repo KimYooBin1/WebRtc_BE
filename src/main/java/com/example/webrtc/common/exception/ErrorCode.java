@@ -14,17 +14,23 @@ public enum ErrorCode {
 	// REQUEST_PARAMETER_NOT_FOUND_ERROR(400, "GLOBAL-004", "입력 파라미터가 존재하지 않습니다."),
 	// REQUEST_PARAMETER_TYPE_NOT_MATCH_ERROR(400, "GLOBAL-005", "입력 파라미터의 타입이 올바르지 않습니다."),
 	//chatRoom
-	CHAT_ROOM_JOIN_ERROR(400,"CHATROOM-001", "방에 인원이 다 찼습니다"),
+	CHAT_ROOM_JOIN_ERROR(400,"CHATROOM-001", "?"),
+	CHAT_ROOM_NOT_FOUND_ERROR(404,"CHATROOM-002", "채팅방을 찾을 수 없습니다"),
+	CHAT_ROOM_LIMITED_USER_ERROR(400,"CHATROOM-003", "방에 인원이 다 찼습니다"),
 	//jwt
 	INVALID_TOKEN_ERROR(401, "AUTH-001", "jwt 토큰이 유효하지 않습니다."),
 	EXPIRED_TOKEN_ERROR(401, "AUTH-002", "jwt 토큰이 만료되었습니다."),
 	NULL_TOKEN_ERROR(401, "AUTH-003", "jwt 토큰이 존재하지 않습니다."),
-	ALREADY_RE_ISSUED_TOKEN_ERROR(400, "AUTH-004", "이미 액세스 토큰 재발급에 사용된 리프레시 토큰입니다.");
+	ALREADY_RE_ISSUED_TOKEN_ERROR(400, "AUTH-004", "이미 액세스 토큰 재발급에 사용된 리프레시 토큰입니다."),
 	//
 	// //auth
+	CREDENTIALS_NOT_MATCHED_ERROR(401, "AUTH-001", "userName 또는 password가 일치하지 않습니다."),
+	ALREADY_EXIST_USER_ERROR(400, "AUTH-002", "이미 존재하는 사용자입니다."),
+	USERNAME_NOT_FOUND_ERROR(404, "AUTH-003", "사용자 이름을 찾을 수 없습니다."),
+	NOT_FOUND_USER_ERROR(404, "AUTH-004", "사용자를 찾을 수 없습니다."),;
+	// USERNAME_NOT_FOUND_ERROR(404, "AUTH-002", "사용자 이름을 찾을 수 엄습니다.");
 	// AUTHENTICATION_ERROR(401, "AUTH-003", "인증에 실패했습니다. 인증 수단이 유효한지 확인하세요."),
 	// AUTHORIZATION_ERROR(403, "AUTH-004", "권한이 존재하지 않습니다."),
-	// CREDENTIALS_NOT_MATCHED_ERROR(401, "AUTH-005", "이메일과 비밀번호 인증에 실패했습니다."),
 	//
 	// //message
 	// TOO_MANY_REQUEST_ERROR(429, "MESSAGE-001", "너무 많은 인증 메시지를 요청했습니다. 24시간 후 요청해주세요."),
