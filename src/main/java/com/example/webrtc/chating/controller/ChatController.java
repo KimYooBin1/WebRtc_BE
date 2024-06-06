@@ -62,7 +62,7 @@ public class ChatController {
 				return new CustomException(CHAT_ROOM_JOIN_ERROR);
 			}
 		);
-		User user = userRepository.findByName(loginUser).orElseThrow(
+		User user = userRepository.findByUsername(loginUser).orElseThrow(
 			// TODO : 이름이 없을때는 어떻게 처리할 것인가
 			() ->{
 				log.error("해당 이름의 user가 없습니다");
@@ -82,7 +82,7 @@ public class ChatController {
 		chatroom.connectUser(user);
 
 
-		chatDto.setMessage(loginUser +"님이 들어왔습니다");
+		chatDto.setMessage(user.getName() +"님이 들어왔습니다");
 		chatDto.setTime(now());
 
 		log.info("{}님이  {}번 방에 접속", loginUser, chatDto.getRoomId());
