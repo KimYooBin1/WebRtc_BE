@@ -26,7 +26,6 @@ public class Chatroom {
 	private Long id;
 	private String roomName;
 	private Long limitUserCnt;
-	// TODO : spring batch 를 사용 해서 일정 주기로 인원 수가 0명인 방을 삭제
 	private Long userCnt;
 	private String password;
 	@JsonIgnore
@@ -34,13 +33,14 @@ public class Chatroom {
 	private List<User> userList = new ArrayList<>();
 
 	public void plus(){
-		// TODO : 인원이 꽉차면?
 		this.userCnt += 1;
 	}
 
 	public void des() {
-		// TODO : 마이너스가 되면?
 		this.userCnt -= 1;
+		if(this.userCnt < 0){
+			this.userCnt = 0L;
+		}
 	}
 	// 비밀번호가 걸린 방 생성
 	public Chatroom(String roomName, Long limitUserCnt, String password) {

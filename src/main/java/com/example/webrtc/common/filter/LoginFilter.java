@@ -1,24 +1,28 @@
 package com.example.webrtc.common.filter;
 
+import static com.example.webrtc.common.exception.ErrorCode.*;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.webrtc.common.dto.PrincipalDetails;
+import com.example.webrtc.common.exception.CustomException;
+import com.example.webrtc.common.exception.ErrorCode;
 import com.example.webrtc.common.utils.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -55,12 +59,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
-
+		//jwt token 만료시간은 30분
 		String token = jwtUtil.createJwt(username, 60*60*1000L);
 
-		response.addHeader("Authorization", "Bearer " + token);
-		// TODO : header 에서 cookie 로 변환
-		response.addCookie(createCookie("Authorization", token));
+		response.addHeader("Set-Cookie", createCookie("Authorization", token).toString());
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 
@@ -71,21 +73,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	//로그인 실패시 실행하는 메소드
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-		org.springframework.security.core.AuthenticationException failed) throws IOException, ServletException {
-		// TODO : 실패했을때 로직 추가하기
-		response.setStatus(401);
+		AuthenticationException failed) throws IOException, ServletException {
+		log.error("error = {}",failed.getMessage());
+		throw new CustomException(CREDENTIALS_NOT_MATCHED_ERROR);
 	}
 
-	private Cookie createCookie(String key, String value) {
-		Cookie cookie = new Cookie(key, value);
-		// TODO : 시간 조정 필요
-		cookie.setMaxAge(60 * 60 * 10000);
-		// TODO : 실제 배포시에는 https true
-		// cookie.setSecure(true);   //local환경이기 때문에 https 불가하기 때문에 지금은 주석처리
-		cookie.setPath("/");
-		cookie.setHttpOnly(true);
-
-		return cookie;
+	private ResponseCookie createCookie(String key, String value) {
+		log.info("createCookie");
+		return ResponseCookie.from(key, value)
+			.maxAge(60*30)
+			.httpOnly(false)
+			.secure(true)
+			.sameSite("None")
+			.path("/")
+			.build();
 	}
 
 }

@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${SQL_URL}
-    username: ${SQL_USERNAME}
-    password: ${SQL_PASSWORD}
+    url: jdbc:mysql://localhost:3306/test?serverTimezone=UTC&characterEncoding=UTF-8
+    username: "root"
+    password: "rladbqls1208"
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,8 +22,8 @@ spring:
         registration:
           naver:
             client-name: naver
-            client-id: ${NAVER_CLIENT_ID}
-            client-secret: ${NAVER_CLIENT_SECRET}
+            client-id: "m_pT5WYQo6xw4gBMXAhM"
+            client-secret: "Pzo483lfaJ"
             redirect-uri: "http://localhost:8080/login/oauth2/code/naver"
             authorization-grant-type: authorization_code
             scope: name, email, mobile
@@ -39,4 +39,4 @@ logging:
     org.hibernate.SQL: debug
 
 jwt:
-  secret: ${JWT_SECRET_KEY}
+  secret: "safdjfk323hswefvsao98y9q23fsadhaio8ya3wef"
