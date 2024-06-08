@@ -1,5 +1,8 @@
 package com.example.webrtc.common.config;
 
+import static org.springframework.http.HttpMethod.*;
+
+import java.io.IOException;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
@@ -21,6 +24,7 @@ import com.example.webrtc.common.filter.LoginFilter;
 import com.example.webrtc.common.service.CustomOAuth2UserService;
 import com.example.webrtc.common.utils.CustomSuccessHandler;
 import com.example.webrtc.common.utils.JWTUtil;
+import com.example.webrtc.common.utils.JwtAccessDeniedHandler;
 import com.example.webrtc.common.utils.JwtAuthenticationEntryPoint;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +39,7 @@ public class SecurityConfig {
 	private final CustomSuccessHandler customSuccessHandler;
 	private final JWTUtil jwtUtil;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -78,6 +83,8 @@ public class SecurityConfig {
 		http
 			.exceptionHandling((exception) -> exception
 				.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+				// .accessDeniedHandler(jwtAccessDeniedHandler));
+
 		//oath2
 		http
 			.oauth2Login((auth) -> auth
@@ -87,8 +94,8 @@ public class SecurityConfig {
 		//경로별 인가 작업
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers( "/chatroom", "/websocket/**", "/").permitAll()
-				// .requestMatchers("/admin").hasRole("ADMIN")
+				.requestMatchers("/websocket/**").permitAll()
+				.requestMatchers(GET, "/chatroom").permitAll()
 				.anyRequest().authenticated());
 
 		//JWTFilter 등록

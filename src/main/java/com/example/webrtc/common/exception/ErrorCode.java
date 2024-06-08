@@ -27,7 +27,8 @@ public enum ErrorCode {
 	CREDENTIALS_NOT_MATCHED_ERROR(401, "AUTH-001", "userName 또는 password가 일치하지 않습니다."),
 	ALREADY_EXIST_USER_ERROR(400, "AUTH-002", "이미 존재하는 사용자입니다."),
 	USERNAME_NOT_FOUND_ERROR(404, "AUTH-003", "사용자 이름을 찾을 수 없습니다."),
-	NOT_FOUND_USER_ERROR(404, "AUTH-004", "사용자를 찾을 수 없습니다."),;
+	NOT_FOUND_USER_ERROR(404, "AUTH-004", "사용자를 찾을 수 없습니다."),
+	ACCESS_DENIED_ERROR(403, "AUTH-005", "접근 권한이 없습니다."),;
 	// USERNAME_NOT_FOUND_ERROR(404, "AUTH-002", "사용자 이름을 찾을 수 엄습니다.");
 	// AUTHENTICATION_ERROR(401, "AUTH-003", "인증에 실패했습니다. 인증 수단이 유효한지 확인하세요."),
 	// AUTHORIZATION_ERROR(403, "AUTH-004", "권한이 존재하지 않습니다."),
