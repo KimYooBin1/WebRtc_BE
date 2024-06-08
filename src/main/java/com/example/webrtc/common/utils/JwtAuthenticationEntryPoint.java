@@ -23,7 +23,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws
 		IOException {
-		log.info("JwtAuthenticationEntryPoint 진입");
+		log.error("JwtAuthenticationEntryPoint 진입 = {}", request.getAttribute("exception").getClass());
 		// JWTFilter에서 발생한 예외를 처리하기 위해 resolveException 메소드를 사용
 		resolver.resolveException(request, response, null, (Exception)request.getAttribute("exception"));
 	}
