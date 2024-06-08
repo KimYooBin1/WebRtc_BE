@@ -1,5 +1,7 @@
 package com.example.webrtc.common.utils;
 
+import static com.example.webrtc.common.exception.ErrorCode.*;
+
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,6 +9,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import com.example.webrtc.common.exception.CustomException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +27,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws
 		IOException {
-		log.info("JwtAuthenticationEntryPoint 진입");
+		if(request.getAttribute("exception") == null) {
+			request.setAttribute("exception", new CustomException(ACCESS_DENIED_ERROR));
+		}
+		log.error("JwtAuthenticationEntryPoint 진입 = {}", request.getAttribute("exception").getClass());
 		// JWTFilter에서 발생한 예외를 처리하기 위해 resolveException 메소드를 사용
 		resolver.resolveException(request, response, null, (Exception)request.getAttribute("exception"));
 	}

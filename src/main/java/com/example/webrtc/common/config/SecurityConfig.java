@@ -1,5 +1,8 @@
 package com.example.webrtc.common.config;
 
+import static org.springframework.http.HttpMethod.*;
+
+import java.io.IOException;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
@@ -8,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,6 +24,7 @@ import com.example.webrtc.common.filter.LoginFilter;
 import com.example.webrtc.common.service.CustomOAuth2UserService;
 import com.example.webrtc.common.utils.CustomSuccessHandler;
 import com.example.webrtc.common.utils.JWTUtil;
+import com.example.webrtc.common.utils.JwtAccessDeniedHandler;
 import com.example.webrtc.common.utils.JwtAuthenticationEntryPoint;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +39,7 @@ public class SecurityConfig {
 	private final CustomSuccessHandler customSuccessHandler;
 	private final JWTUtil jwtUtil;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -65,15 +70,21 @@ public class SecurityConfig {
 			})));
 		//csrf disable
 		http
-			.csrf((auth) -> auth.disable());
+			.csrf(AbstractHttpConfigurer::disable);
 
 		//From 로그인 방식 disable
 		http
-			.formLogin((auth) -> auth.disable());
+			.formLogin(AbstractHttpConfigurer::disable);
 
 		//http basic 인증 방식 disable
 		http
-			.httpBasic((auth) -> auth.disable());
+			.httpBasic(AbstractHttpConfigurer::disable);
+		//security 내부의 exception 처리를 위해 custom jwtAuthenticationEntryPoint 등록
+		http
+			.exceptionHandling((exception) -> exception
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+				// .accessDeniedHandler(jwtAccessDeniedHandler));
+
 		//oath2
 		http
 			.oauth2Login((auth) -> auth
@@ -83,18 +94,13 @@ public class SecurityConfig {
 		//경로별 인가 작업
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/user/**", "/chatroom", "/websocket/**", "/").permitAll()
-				// .requestMatchers("/admin").hasRole("ADMIN")
+				.requestMatchers("/websocket/**").permitAll()
+				.requestMatchers(GET, "/chatroom").permitAll()
 				.anyRequest().authenticated());
-		//security 내부의 exception 처리를 위해 custom jwtAuthenticationEntryPoint 등록
-		http
-			.exceptionHandling((exception) -> exception
-				.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
 		//JWTFilter 등록
 		http
 			.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-			// .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 		http
 			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
 				UsernamePasswordAuthenticationFilter.class);
