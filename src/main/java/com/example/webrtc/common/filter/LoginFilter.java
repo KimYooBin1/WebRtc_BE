@@ -69,8 +69,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		response.addHeader("Set-Cookie", createCookie("Authorization", access).toString());
 		response.addHeader("Set-Cookie", createCookie("refresh", refresh).toString());
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
 	}
 
 	//로그인 실패시 실행하는 메소드
