@@ -16,15 +16,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.example.webrtc.common.filter.CustomLogoutFilter;
 import com.example.webrtc.common.filter.JWTFilter;
 import com.example.webrtc.common.filter.LoginFilter;
+import com.example.webrtc.common.repository.RefreshRepository;
 import com.example.webrtc.common.service.CustomOAuth2UserService;
 import com.example.webrtc.common.utils.CustomSuccessHandler;
 import com.example.webrtc.common.utils.JWTUtil;
-import com.example.webrtc.common.utils.JwtAccessDeniedHandler;
 import com.example.webrtc.common.utils.JwtAuthenticationEntryPoint;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +41,7 @@ public class SecurityConfig {
 	private final CustomSuccessHandler customSuccessHandler;
 	private final JWTUtil jwtUtil;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final RefreshRepository refreshRepository;
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -95,6 +97,7 @@ public class SecurityConfig {
 		http
 			.authorizeHttpRequests((auth) -> auth
 				.requestMatchers("/websocket/**").permitAll()
+				.requestMatchers("/user/sign", "/reissue", "/login", "/logout").permitAll()
 				.requestMatchers(GET, "/chatroom").permitAll()
 				.anyRequest().authenticated());
 
@@ -102,9 +105,11 @@ public class SecurityConfig {
 		http
 			.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 		http
-			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
+			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository),
 				UsernamePasswordAuthenticationFilter.class);
-
+		//로그아웃 설정
+		http
+			.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 		//세션 설정
 		http
 			.sessionManagement((session) -> session

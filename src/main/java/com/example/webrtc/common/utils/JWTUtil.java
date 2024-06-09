@@ -27,8 +27,22 @@ public class JWTUtil {
 		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
 	}
 
+	public String getCategory(String token) {
+		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+	}
+
 	public String createJwt(String username, Long expiredMs) {
 		return Jwts.builder()
+			.claim("username", username)
+			.issuedAt(new Date(System.currentTimeMillis()))
+			.expiration(new Date(System.currentTimeMillis() + expiredMs))
+			.signWith(secretKey)
+			.compact();
+	}
+	// access token, refresh token category 추가
+	public String createJwt(String category, String username, Long expiredMs) {
+		return Jwts.builder()
+			.claim("category", category)
 			.claim("username", username)
 			.issuedAt(new Date(System.currentTimeMillis()))
 			.expiration(new Date(System.currentTimeMillis() + expiredMs))

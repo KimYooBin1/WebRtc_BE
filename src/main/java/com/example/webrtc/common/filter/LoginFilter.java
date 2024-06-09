@@ -4,6 +4,7 @@ import static com.example.webrtc.common.exception.ErrorCode.*;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.springframework.http.ResponseCookie;
@@ -15,9 +16,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.webrtc.common.dto.PrincipalDetails;
+import com.example.webrtc.common.entity.RefreshEntity;
 import com.example.webrtc.common.exception.CustomException;
-import com.example.webrtc.common.exception.ErrorCode;
+import com.example.webrtc.common.repository.RefreshRepository;
 import com.example.webrtc.common.utils.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	private final AuthenticationManager authenticationManager;
 	private final JWTUtil jwtUtil;
+	private final RefreshRepository refreshRepository;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
@@ -52,22 +54,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws
 		IOException {
-		PrincipalDetails customUserDetails = (PrincipalDetails) authentication.getPrincipal();
-
-		String username = customUserDetails.getUsername();
+		String username = authentication.getName();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
-		//jwt token 만료시간은 30분
-		String token = jwtUtil.createJwt(username, 60*60*1000L);
+		//jwt token 만료시간은 10분
+		String access = jwtUtil.createJwt("access", username, 60 * 10 * 1000L);
+		//refresh token 만료시간은 24시간
+		String refresh = jwtUtil.createJwt("refresh", username, 60 * 60 * 1000L * 24);
+		//refresh token을 DB에 저장
+		addRefreshEntity(username, refresh, 60 * 60 * 1000L * 24);
 
-		response.addHeader("Set-Cookie", createCookie("Authorization", token).toString());
+
+		response.addHeader("Set-Cookie", createCookie("Authorization", access).toString());
+		response.addHeader("Set-Cookie", createCookie("refresh", refresh).toString());
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-
-		// 응답 바디에 JSON 쓰기
-		response.getWriter().write(username);
 	}
 
 	//로그인 실패시 실행하는 메소드
@@ -88,5 +91,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 			.path("/")
 			.build();
 	}
+	private void addRefreshEntity(String username, String refresh, Long expiredMs) {
 
+		Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+		RefreshEntity refreshEntity = new RefreshEntity();
+		refreshEntity.setUsername(username);
+		refreshEntity.setRefresh(refresh);
+		refreshEntity.setExpiration(date.toString());
+
+		refreshRepository.save(refreshEntity);
+	}
 }
