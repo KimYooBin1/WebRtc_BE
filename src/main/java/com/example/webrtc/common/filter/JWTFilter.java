@@ -1,5 +1,7 @@
 package com.example.webrtc.common.filter;
 
+import static com.example.webrtc.common.exception.ErrorCode.*;
+
 import java.io.IOException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,8 +11,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.webrtc.common.dto.PrincipalDetails;
 import com.example.webrtc.common.entity.User;
+import com.example.webrtc.common.exception.CustomException;
 import com.example.webrtc.common.utils.JWTUtil;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -30,41 +34,39 @@ public class JWTFilter extends OncePerRequestFilter {
 		//security 단에서 @RestControllerAdvice로 예외처리를 하기 때문에 try-catch문을 사용하여 예외처리
 		try{
 			//cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
-			String token = null;
+			String access = null;
 			Cookie[] cookies = request.getCookies();
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
 
 					System.out.println(cookie.getName());
 					if (cookie.getName().equals("Authorization")) {
-
-						token = cookie.getValue();
+						access = cookie.getValue();
 					}
 				}
 			}
 			//Authorization 헤더 검증
-			if (token == null) {
-
-				System.out.println("token null");
+			if (access == null) {
+				log.info("token null");
 				filterChain.doFilter(request, response);
-
 				//조건이 해당되면 메소드 종료 (필수)
 				return;
 			}
 
-			System.out.println("authorization now");
-			//Bearer 부분 제거 후 순수 토큰만 획득
-
 			//토큰 소멸 시간 검증
-			if (jwtUtil.isExpired(token)) {
-				System.out.println("token expired");
-				filterChain.doFilter(request, response);
-				//조건이 해당되면 메소드 종료 (필수)
-				return;
+			if (jwtUtil.isExpired(access)) {
+				log.warn("token expired");
+				throw new ExpiredJwtException(null, null, "토큰이 만료되었습니다.");
+			}
+
+			String category = jwtUtil.getCategory(access);
+			if(!category.equals("access")){
+				log.warn("category error");
+				throw new CustomException(TOKEN_CATEGORY_NOT_MATCHED_ERROR);
 			}
 
 			//토큰에서 username과 role 획득
-			String username = jwtUtil.getUsername(token);
+			String username = jwtUtil.getUsername(access);
 			log.info("username == {}", username);
 			Authentication authToken = null;
 			// oauth2 로그인인지 일반 로그인인지 판별
