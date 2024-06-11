@@ -2,7 +2,6 @@ package com.example.webrtc.common.config;
 
 import static org.springframework.http.HttpMethod.*;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
@@ -96,9 +95,10 @@ public class SecurityConfig {
 		//경로별 인가 작업
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/websocket/**").permitAll()
+				.requestMatchers("/websocket/**", "/webrtc/**").permitAll()
 				.requestMatchers("/user/sign", "/reissue", "/login", "/logout").permitAll()
 				.requestMatchers(GET, "/chatroom").permitAll()
+				.requestMatchers(GET, "/stream").permitAll()
 				.anyRequest().authenticated());
 
 		//JWTFilter 등록
