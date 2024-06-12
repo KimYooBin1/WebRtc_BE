@@ -49,4 +49,15 @@ public class StreamService {
 		room.plus();
 		room.connectUser(userService.findUserByUserName(principal.getName()));
 	}
+	@Transactional
+	public void leaveRoom(Long RoomId, Principal principal) {
+		if(principal == null) {
+			// TODO : FE client 에 error message 전달해줘야됨
+			throw new CustomException(PRINCIPAL_NOT_FOUND_ERROR);
+		}
+		Chatroom room = chatroomRepository.findById(RoomId).orElseThrow();
+		log.info("User {} left room {}", principal.getName(), room.getId());
+		room.des();
+		room.disconnectUser(userService.findUserByUserName(principal.getName()));
+	}
 }

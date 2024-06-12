@@ -30,7 +30,7 @@ public class SignalHandler extends TextWebSocketHandler {
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		super.afterConnectionClosed(session, status);
+		log.debug("websocket connection closed: {}", session);
 	}
 
 	@Override
@@ -44,14 +44,18 @@ public class SignalHandler extends TextWebSocketHandler {
 		WebSocketMessage message = objectMapper.readValue(text.getPayload(), WebSocketMessage.class);
 		String userName = message.getFrom();
 		Long data = Long.parseLong(message.getData());
+		log.info("Received message: {}", message);
 		switch (message.getType()) {
 			case MSG_TYPE_OFFER:
 			case MSG_TYPE_ANSWER:
 			case MSG_TYPE_ICE:
-				log.info("Received message: {}", message);
 				break;
 			case MSG_TYPE_JOIN:
 				streamService.joinRoom(data, session.getPrincipal());
+				break;
+			case MSG_TYPE_LEAVE:
+				streamService.leaveRoom(data, session.getPrincipal());
+				break;
 			default:
 				log.debug("Unknown message type: {}", message.getType());
 		}
