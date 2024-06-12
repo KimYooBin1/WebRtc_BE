@@ -54,7 +54,7 @@ public class ChatController {
 		log.info("roomId = {}", chatDto.getRoomId());
 		Chatroom chatroom = chatroomService.findRoomById(chatDto.getRoomId());
 		//principal 이 없으면 @MessageExceptionHandler로 처리가 안돼는데 굳이 잡아줄 이유가 있는지
-		User user = userService.findUserByName(loginUser);
+		User user = userService.findUserByUserName(loginUser);
 
 		if(chatroom.getLimitUserCnt() <= chatroom.getUserCnt()){
 			log.info("인원 제한");

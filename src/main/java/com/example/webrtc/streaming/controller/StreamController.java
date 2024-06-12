@@ -26,6 +26,6 @@ public class StreamController {
 
 	@PostMapping("/stream")
 	public ResponseEntity<Chatroom> streamCreate(@RequestBody CreateRoom request){
-		return ResponseEntity.ok(streamService.createChatRoom(request));
+		return ResponseEntity.ok(streamService.createRoom(request));
 	}
 }

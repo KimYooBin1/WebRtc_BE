@@ -8,8 +8,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.example.webrtc.chating.entity.Chatroom;
-import com.example.webrtc.common.entity.User;
 import com.example.webrtc.streaming.dto.WebSocketMessage;
 import com.example.webrtc.streaming.service.StreamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,13 +51,7 @@ public class SignalHandler extends TextWebSocketHandler {
 				log.info("Received message: {}", message);
 				break;
 			case MSG_TYPE_JOIN:
-				Chatroom room = streamService.findRoomById(data).orElseThrow(
-					// TODO : 나중에 적절한 exception 추가
-					IOException::new
-				);
-				// TODO : user값 재대로 넣기
-				room.connectUser(new User(userName, ""));
-
+				streamService.joinRoom(data, session.getPrincipal());
 			default:
 				log.debug("Unknown message type: {}", message.getType());
 		}
