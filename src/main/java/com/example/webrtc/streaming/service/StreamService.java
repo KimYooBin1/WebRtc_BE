@@ -4,17 +4,24 @@ import static com.example.webrtc.chating.dto.ChatType.*;
 import static com.example.webrtc.common.exception.ErrorCode.*;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.WebSocketSession;
 
 import com.example.webrtc.chating.entity.Chatroom;
 import com.example.webrtc.chating.entity.CreateRoom;
 import com.example.webrtc.chating.repository.ChatroomRepository;
 import com.example.webrtc.common.exception.CustomException;
 import com.example.webrtc.common.service.UserService;
+import com.example.webrtc.streaming.entity.Room;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +33,17 @@ import lombok.extern.slf4j.Slf4j;
 public class StreamService {
 	private final ChatroomRepository chatroomRepository;
 	private final UserService userService;
+	private Set<Room> rooms = new TreeSet<>(Comparator.comparing(Room::getId));
+	public Room findByRoomId(Long id) {
+		return rooms.stream().filter(room -> room.getId().equals(id)).findFirst().orElseThrow(
+				() -> new CustomException(ROOM_NOT_FOUND_ERROR)
+		);
+	}
+	public Map<String, WebSocketSession> getClient(Room room){
+		return Optional.ofNullable(room)
+			.map(r -> Collections.unmodifiableMap(r.getClients()))
+			.orElse(Collections.emptyMap());
+	}
 	public List<Chatroom> findAllRoom(){
 		return chatroomRepository.findAllByType(Streaming);
 	}
@@ -33,10 +51,16 @@ public class StreamService {
 		return chatroomRepository.findByIdAndType(id, Streaming);
 	}
 
+	public WebSocketSession addClient(Room room, WebSocketSession session) {
+		return room.getClients().put(session.getId(), session);
+	}
+
 	@Transactional
 	public Chatroom createRoom(CreateRoom request) {
 		Chatroom chatroom = new Chatroom(request.getRoomName(), 2L, Streaming);
-		return chatroomRepository.save(chatroom);
+		Chatroom save = chatroomRepository.save(chatroom);
+		rooms.add(new Room(save.getId()));
+		return save;
 	}
 	@Transactional
 	public void joinRoom(Long RoomId, Principal principal) {

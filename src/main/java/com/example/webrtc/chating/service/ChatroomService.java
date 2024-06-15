@@ -32,7 +32,7 @@ public class ChatroomService {
 		return chatroomRepository.findById(id).orElseThrow(
 			() ->{
 				log.error("해당 id의 chatroom이 없습니다");
-				return new CustomException(CHAT_ROOM_NOT_FOUND_ERROR);
+				return new CustomException(ROOM_NOT_FOUND_ERROR);
 			}
 		);
 	}
