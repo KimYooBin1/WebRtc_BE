@@ -15,8 +15,11 @@ public enum ErrorCode {
 	// REQUEST_PARAMETER_TYPE_NOT_MATCH_ERROR(400, "GLOBAL-005", "입력 파라미터의 타입이 올바르지 않습니다."),
 	//chatRoom
 	CHAT_ROOM_JOIN_ERROR(400,"CHATROOM-001", "?"),
-	CHAT_ROOM_NOT_FOUND_ERROR(404,"CHATROOM-002", "채팅방을 찾을 수 없습니다"),
+	ROOM_NOT_FOUND_ERROR(404,"CHATROOM-002", "채팅방을 찾을 수 없습니다"),
 	CHAT_ROOM_LIMITED_USER_ERROR(400,"CHATROOM-003", "방에 인원이 다 찼습니다"),
+	//streamRoom
+	STREAM_ROOM_JOIN_ERROR(400,"STREAMROOM-001", "?"),
+	STREAM_ROOM_NOT_FOUND_ERROR(404,"STREAMROOM-002", "방을 찾을 수 없습니다"),
 	//jwt
 	INVALID_TOKEN_ERROR(401, "AUTH-001", "jwt 토큰이 유효하지 않습니다."),
 	EXPIRED_TOKEN_ERROR(401, "AUTH-002", "jwt 토큰이 만료되었습니다."),
@@ -33,7 +36,8 @@ public enum ErrorCode {
 	USERNAME_NOT_FOUND_ERROR(404, "AUTH-003", "사용자 이름을 찾을 수 없습니다."),
 	NOT_FOUND_USER_ERROR(404, "AUTH-004", "사용자를 찾을 수 없습니다."),
 	ACCESS_DENIED_ERROR(403, "AUTH-005", "접근 권한이 없습니다."),
-	ALREADY_LOGOUT_ERROR(400, "AUTH-006", "이미 로그아웃 되었습니다."),;
+	ALREADY_LOGOUT_ERROR(400, "AUTH-006", "이미 로그아웃 되었습니다."),
+	PRINCIPAL_NOT_FOUND_ERROR(404, "AUTH-007", "principal을 찾을 수 없습니다."),;
 	// USERNAME_NOT_FOUND_ERROR(404, "AUTH-002", "사용자 이름을 찾을 수 엄습니다.");
 	// AUTHENTICATION_ERROR(401, "AUTH-003", "인증에 실패했습니다. 인증 수단이 유효한지 확인하세요."),
 	// AUTHORIZATION_ERROR(403, "AUTH-004", "권한이 존재하지 않습니다."),

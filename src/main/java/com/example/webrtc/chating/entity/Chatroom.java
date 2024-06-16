@@ -1,14 +1,17 @@
 package com.example.webrtc.chating.entity;
 
+import static jakarta.persistence.EnumType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.webrtc.chating.dto.ChatType;
 import com.example.webrtc.common.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -28,6 +31,8 @@ public class Chatroom {
 	private Long limitUserCnt;
 	private Long userCnt;
 	private String password;
+	@Enumerated(STRING)
+	private ChatType type;
 	@JsonIgnore
 	@OneToMany(mappedBy = "chatroom")
 	private List<User> userList = new ArrayList<>();
@@ -43,17 +48,19 @@ public class Chatroom {
 		}
 	}
 	// 비밀번호가 걸린 방 생성
-	public Chatroom(String roomName, Long limitUserCnt, String password) {
+	public Chatroom(String roomName, Long limitUserCnt, String password, ChatType type) {
 		this.roomName = roomName;
 		this.limitUserCnt = limitUserCnt;
 		this.password = password;
 		this.userCnt = 0L;
+		this.type = type;
 	}
 	// 비밀번호가 없는 방 생성
-	public Chatroom(String roomName, Long limitUserCnt) {
+	public Chatroom(String roomName, Long limitUserCnt, ChatType type) {
 		this.roomName = roomName;
 		this.limitUserCnt = limitUserCnt;
 		this.userCnt = 0L;
+		this.type = type;
 	}
 
 	public void connectUser(User user) {

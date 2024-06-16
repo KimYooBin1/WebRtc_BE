@@ -51,7 +51,7 @@ public class UserController {
 		if(user == null){
 			throw new CustomException(USERNAME_NOT_FOUND_ERROR);
 		}
-		User result = userService.findUserByName(user.getUsername());
+		User result = userService.findUserByUserName(user.getUsername());
 		log.info("result = {}", result);
 		return ResponseEntity.ok(result);
 	}

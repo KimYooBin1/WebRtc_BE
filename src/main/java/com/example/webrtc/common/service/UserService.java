@@ -78,7 +78,7 @@ public class UserService implements UserDetailsService {
 			}
 		);
 	}
-	public User findUserByName(String name){
+	public User findUserByUserName(String name){
 		return userRepository.findByUsername(name).orElseThrow(
 			() -> {
 				log.error("존재하지 않는 이름 입니다");
