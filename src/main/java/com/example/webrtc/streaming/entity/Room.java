@@ -10,6 +10,7 @@ import lombok.Getter;
 @Getter
 public class Room {
 	private Long id;
+	//session ID를 key로 하여 WebSocketSession을 저장
 	private Map<String, WebSocketSession> clients = new HashMap<>();
 	public Room(Long id) {
 		this.id = id;

@@ -1,10 +1,8 @@
 package com.example.webrtc.common.utils;
 
-import static com.example.webrtc.common.exception.ErrorCode.*;
-
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map;단
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -12,8 +10,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.example.webrtc.chating.entity.Chatroom;
-import com.example.webrtc.common.exception.CustomException;
 import com.example.webrtc.streaming.dto.WebSocketMessage;
 import com.example.webrtc.streaming.entity.Room;
 import com.example.webrtc.streaming.service.StreamService;
@@ -60,6 +56,7 @@ public class SignalHandler extends TextWebSocketHandler {
 		WebSocketMessage message = objectMapper.readValue(text.getPayload(), WebSocketMessage.class);
 		String userName = message.getFrom();
 		String data = message.getData();
+		Room room;
 		long id;
 		log.info("Received message: {}", message);
 		switch (message.getType()) {
@@ -71,7 +68,7 @@ public class SignalHandler extends TextWebSocketHandler {
 				log.info("Signal: {}",
 					candidate != null ? candidate.toString().substring(0, 64) : sdp.toString().substring(0, 64));
 				// 현재 유저가 속해있는 방
-				Room room = sessionIdToRoomMap.get(session.getId());
+				room = sessionIdToRoomMap.get(session.getId());
 				if(room != null) {
 					// 해당 방에 있는 유저들에게 메시지 전송
 					Map<String, WebSocketSession> clients = streamService.getClient(room);
@@ -98,8 +95,18 @@ public class SignalHandler extends TextWebSocketHandler {
 				streamService.addClient(findRoom, session);
 				break;
 			case MSG_TYPE_LEAVE:
+				// TODO : 해당 방의 인원이 0명이 되면 방을 삭제해야됨
 				id = Long.parseLong(message.getData());
 				streamService.leaveRoom(id, session.getPrincipal());
+				room = sessionIdToRoomMap.get(session.getId());
+				room.getClients().remove(session.getId());
+				int size = room.getClients().size();
+				log.info("Room {} has {} clients", room.getId(), size);
+				sessionIdToRoomMap.remove(session.getId());
+				if(size == 0) {
+					log.info("Room {} is empty. Removing room.", room.getId());
+					streamService.removeRoom(room);
+				}
 				break;
 			default:
 				log.debug("Unknown message type: {}", message.getType());

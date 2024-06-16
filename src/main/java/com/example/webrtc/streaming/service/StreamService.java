@@ -84,4 +84,10 @@ public class StreamService {
 		room.des();
 		room.disconnectUser(userService.findUserByUserName(principal.getName()));
 	}
+
+	@Transactional
+	public void removeRoom(Room room) {
+		rooms.remove(room);
+		chatroomRepository.deleteById(room.getId());
+	}
 }
