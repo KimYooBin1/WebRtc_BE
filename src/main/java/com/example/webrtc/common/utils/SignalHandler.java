@@ -2,7 +2,7 @@ package com.example.webrtc.common.utils;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;단
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -48,11 +48,14 @@ public class SignalHandler extends TextWebSocketHandler {
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		log.info("Connection established: {}", session);
 		// 해당 방에 인원이 존재하는지 분석해서 있으면 true, 없으면 false 를 return 해서 다음에 처리할 일을 결정한다
+		// TODO : 지금 코드에서는 해당 방의 인원이 있는지에 따라 T/F를 반환하는게 아닌, 다른 session이 있는지에 따라 T/F를 반환한다
 		sendMessage(session, new WebSocketMessage("Server", MSG_TYPE_JOIN, Boolean.toString(!sessionIdToRoomMap.isEmpty()), null, null));
 	}
 
 	@Override
+	// 들어오는 message type에 따라 처리
 	protected void handleTextMessage(WebSocketSession session, TextMessage text) throws Exception {
+		// 받은 메시지를 WebSocketMessage로 변환
 		WebSocketMessage message = objectMapper.readValue(text.getPayload(), WebSocketMessage.class);
 		String userName = message.getFrom();
 		String data = message.getData();
@@ -70,7 +73,7 @@ public class SignalHandler extends TextWebSocketHandler {
 				// 현재 유저가 속해있는 방
 				room = sessionIdToRoomMap.get(session.getId());
 				if(room != null) {
-					// 해당 방에 있는 유저들에게 메시지 전송
+					// 해당 방에 있는 유저들 중 현재 유저를 제외한 유저들에게 메시지 전송
 					Map<String, WebSocketSession> clients = streamService.getClient(room);
 					clients.forEach((sessionId, client) -> {
 						if(!sessionId.equals(session.getId())) {
@@ -87,7 +90,10 @@ public class SignalHandler extends TextWebSocketHandler {
 				break;
 			case MSG_TYPE_JOIN:
 				id = Long.parseLong(message.getData());
+				// repository에서 id로 방을 찾아서 해당 방에 유저를 추가(DB 처리)
 				streamService.joinRoom(id, session.getPrincipal());
+				// TODO : service단으로 한번에 묶어도 될거 같은데
+				// in-memory에서 해당 방을 찾아서 가져옴(in- memory 처리)
 				Room findRoom = streamService.findByRoomId(id);
 				// 해당 방에 sessionId를 매핑
 				sessionIdToRoomMap.put(session.getId(), findRoom);
@@ -95,14 +101,17 @@ public class SignalHandler extends TextWebSocketHandler {
 				streamService.addClient(findRoom, session);
 				break;
 			case MSG_TYPE_LEAVE:
-				// TODO : 해당 방의 인원이 0명이 되면 방을 삭제해야됨
 				id = Long.parseLong(message.getData());
+				// repository에서 id로 방을 찾아서 해당 방에서 유저를 제거(DB 처리)
 				streamService.leaveRoom(id, session.getPrincipal());
+				// TODO : service로 처리를 해줘도 될거 같다
+				//Map 으로 부터 현재 나간 방을 검색
 				room = sessionIdToRoomMap.get(session.getId());
+				// 해당 방의 client 에서 해당 session을 제거
 				room.getClients().remove(session.getId());
 				int size = room.getClients().size();
 				log.info("Room {} has {} clients", room.getId(), size);
-				sessionIdToRoomMap.remove(session.getId());
+				// 방의 인원이 0명이면 방을 삭제
 				if(size == 0) {
 					log.info("Room {} is empty. Removing room.", room.getId());
 					streamService.removeRoom(room);

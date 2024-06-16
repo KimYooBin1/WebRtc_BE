@@ -87,7 +87,9 @@ public class StreamService {
 
 	@Transactional
 	public void removeRoom(Room room) {
+		// in-memory에서 방 제거
 		rooms.remove(room);
+		// DB에서 방 제거
 		chatroomRepository.deleteById(room.getId());
 	}
 }
