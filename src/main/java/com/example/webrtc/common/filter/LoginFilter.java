@@ -76,7 +76,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException failed) throws IOException, ServletException {
 		log.error("error = {}",failed.getMessage());
-		throw new CustomException(CREDENTIALS_NOT_MATCHED_ERROR);
+		// TODO : message로 에러 메시지 전달하면 될거 같다.
+		response.sendError(403, CREDENTIALS_NOT_MATCHED_ERROR.getMessage());
+		// throw new CustomException(CREDENTIALS_NOT_MATCHED_ERROR);
 	}
 
 	private ResponseCookie createCookie(String key, String value) {
