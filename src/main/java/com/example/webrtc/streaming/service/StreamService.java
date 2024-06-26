@@ -54,7 +54,9 @@ public class StreamService {
 	public WebSocketSession addClient(Room room, WebSocketSession session) {
 		return room.getClients().put(session.getId(), session);
 	}
-
+	public List<Chatroom> findMemoryRoom(){
+		return rooms.stream().map(room -> chatroomRepository.findById(room.getId()).orElseThrow()).toList();
+	}
 	@Transactional
 	public Chatroom createRoom(CreateRoom request) {
 		Chatroom chatroom = new Chatroom(request.getRoomName(), 2L, Streaming);
@@ -68,7 +70,9 @@ public class StreamService {
 			// TODO : FE client 에 error message 전달해줘야됨
 			throw new CustomException(PRINCIPAL_NOT_FOUND_ERROR);
 		}
-		Chatroom room = chatroomRepository.findById(RoomId).orElseThrow();
+		Chatroom room = chatroomRepository.findById(RoomId).orElseThrow(
+				() -> new CustomException(ROOM_NOT_FOUND_ERROR)
+		);
 		log.info("User {} joined room {}", principal.getName(), room.getId());
 		room.plus();
 		room.connectUser(userService.findUserByUserName(principal.getName()));

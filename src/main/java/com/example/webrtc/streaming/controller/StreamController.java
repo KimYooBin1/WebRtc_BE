@@ -23,7 +23,10 @@ public class StreamController {
 	public ResponseEntity<List<Chatroom>> stream(){
 		return ResponseEntity.ok(streamService.findAllRoom());
 	}
-
+	@GetMapping("/stream/memory")
+	public ResponseEntity<List<Chatroom>> streamMemory(){
+		return ResponseEntity.ok(streamService.findMemoryRoom());
+	}
 	@PostMapping("/stream")
 	public ResponseEntity<Chatroom> streamCreate(@RequestBody CreateRoom request){
 		return ResponseEntity.ok(streamService.createRoom(request));

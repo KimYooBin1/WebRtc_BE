@@ -98,7 +98,7 @@ public class SecurityConfig {
 				.requestMatchers("/websocket/**", "/webrtc/**").permitAll()
 				.requestMatchers("/user/sign", "/reissue", "/login", "/logout").permitAll()
 				.requestMatchers(GET, "/chatroom").permitAll()
-				.requestMatchers(GET, "/stream").permitAll()
+				.requestMatchers(GET, "/stream/**").permitAll()
 				.anyRequest().authenticated());
 
 		//JWTFilter 등록
