@@ -1,6 +1,7 @@
 package com.example.webrtc.common.config;
 
 import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Collections;
 
@@ -13,7 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -30,10 +33,12 @@ import com.example.webrtc.common.utils.JwtAuthenticationEntryPoint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final CustomOAuth2UserService customOAuth2UserService;
@@ -81,11 +86,19 @@ public class SecurityConfig {
 		http
 			.httpBasic(AbstractHttpConfigurer::disable);
 		//security 내부의 exception 처리를 위해 custom jwtAuthenticationEntryPoint 등록
+		// http
+		// 	.exceptionHandling((exception) -> exception
+		// 		.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+				// .accessDeniedHandler(jwtAccessDeniedHandler));
 		http
 			.exceptionHandling((exception) -> exception
-				.authenticationEntryPoint(jwtAuthenticationEntryPoint));
-				// .accessDeniedHandler(jwtAccessDeniedHandler));
-
+				.accessDeniedHandler((request, response, accessDeniedException) ->{
+						log.error("accessDeniedException = {}", accessDeniedException.getMessage());
+						response.setStatus(403);
+					}
+				)
+				//oauth2 인증 실패시 403 에러 반환, 기본적으로 로그인 페이지로 redirect되는 문제 해결
+				.authenticationEntryPoint(new HttpStatusEntryPoint(FORBIDDEN)));
 		//oath2
 		http
 			.oauth2Login((auth) -> auth
@@ -95,15 +108,15 @@ public class SecurityConfig {
 		//경로별 인가 작업
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/websocket/**", "/webrtc/**").permitAll()
+				.requestMatchers("/webrtc/**").permitAll()
 				.requestMatchers("/user/sign", "/reissue", "/login", "/logout").permitAll()
 				.requestMatchers(GET, "/chatroom").permitAll()
-				.requestMatchers(GET, "/stream").permitAll()
+				.requestMatchers(GET, "/stream/**").permitAll()
 				.anyRequest().authenticated());
 
 		//JWTFilter 등록
 		http
-			.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(new JWTFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
 		http
 			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository),
 				UsernamePasswordAuthenticationFilter.class);
