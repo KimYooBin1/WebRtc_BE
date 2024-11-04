@@ -30,8 +30,7 @@ webrtc를 사용해 streaming service 구현.
 ### 구현할 기능
 | 기능 설명 | 스크린샷 |
 | ------- | ----- |
-| 1 대 1 화상통화 | |
-| 얼굴 인식 -> 가상 캐릭터로 변환 | |
+| 화상 통화 | ![image](https://github.com/user-attachments/assets/0b9e1589-ee35-4f83-abc8-e84e7d9671ab) |
 | 실제 배포 | |
 | ui깔끔하게 | |
 
